@@ -1,0 +1,21 @@
+<ion-view title="Personal" id="page3">
+  <ion-content padding="true" class=" manual-remove-top-padding has-header">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="doRefresh()">
+    </ion-refresher>
+    <div class="spacer" style="width: 300px; height: 12px;"></div>
+    <div id="personal-markdown3" style="text-align:center;" class="show-list-numbers-and-dots">
+      <p style="color:#000000;">Welcome {{name}}!</p>
+    </div>
+    <div class="spacer" style="width: 300px; height: 12px;"></div>
+    <ion-list id="personal-list6">
+      <ion-item class="item-icon-right" id="personal-list-item4" ui-sref="tabsController.campaign({&quot;id&quot;:&quot;&quot;+campaign.id+&quot;&quot;})" ng-repeat="campaign in campaigns">{{campaign.name}}
+        <span class="item-note">{{campaign.active}}</span>
+        <i class="icon ion-android-bicycle"></i>
+        <ion-option-button class="button-assertive">Info</ion-option-button>
+      </ion-item>
+    </ion-list>
+    <button id="personal-button6" ng-click="logout()" style="border-radius:0px 0px 0px 0px;" class="button button-assertive  button-block">Logout</button>
+  </ion-content>
+</ion-view>

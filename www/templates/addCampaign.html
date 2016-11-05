@@ -1,0 +1,32 @@
+<ion-view title="Add Campaign" id="page8">
+  <ion-content padding="true" class="has-header">
+    <h2 id="addCampaign-heading7" style="color:#EF473A;text-align:center;">Make a Campaign for {{buildingTitle}}</h2>
+    <div class="spacer" style="width: 300px; height: 35px;"></div>
+    <form id="addCampaign-form4" class="list">
+      <label class="item item-input" id="addCampaign-input11">
+        <span class="input-label">Name: </span>
+        <input type="text" placeholder="" ng-model="campaign.name">
+      </label>
+      <label class="item item-input" id="addCampaign-input7">
+        <span class="input-label">Goal:</span>
+        <input type="text" placeholder="" ng-model="campaign.goal">
+      </label>
+      <label class="item item-input" id="addCampaign-input8">
+        <span class="input-label">Duration:</span>
+        <input type="text" placeholder="" ng-model="campaign.duration">
+      </label>
+      <label class="item item-input" id="addCampaign-input9">
+        <span class="input-label">Description:</span>
+        <input type="text" placeholder="" ng-model="campaign.description">
+      </label>
+      <label class="item item-input" id="addCampaign-input13">
+        <span class="input-label">Key:</span>
+        <input type="text" placeholder="" ng-model="campaign.key">
+      </label>
+    </form>
+    <div id="addCampaign-button-bar2" class="button-bar">
+      <a ui-sref="tabsController.buildings" id="addCampaign-button15" ng-click="cancel()" class="button button-dark  button-block">Cancel</a>
+      <a ui-sref="tabsController.buildings" id="addCampaign-button17" ng-click="addCampaign()" class="button button-balanced  button-block">Add!</a>
+    </div>
+  </ion-content>
+</ion-view>

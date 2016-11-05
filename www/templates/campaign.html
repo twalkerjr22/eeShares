@@ -1,0 +1,33 @@
+<ion-view title="Campaign" id="page9">
+  <ion-content padding="true" class="has-header">
+    <h2 id="campaign-heading10" style="color:#EF473A;text-align:center;">{{name}}</h2>
+    <div class="spacer" style="width: 300px; height: 35px;"></div>
+    <form id="campaign-form6" class="list">
+      <label class="item item-input readonly" id="campaign-input10">
+        <span class="input-label">Name: </span>
+        <input type="text" placeholder="" ng-model="name" ng-readonly="true">
+      </label>
+      <label class="item item-input readonly" id="campaign-input12">
+        <span class="input-label">Goal:</span>
+        <input type="text" placeholder="" ng-model="goal" ng-readonly="true">
+      </label>
+      <label class="item item-input readonly" id="campaign-input18">
+        <span class="input-label">Duration:</span>
+        <input type="text" placeholder="" ng-model="duration" ng-readonly="true">
+      </label>
+      <label class="item item-input" id="campaign-input19">
+        <span class="input-label">Description:</span>
+        <input type="text" placeholder="" ng-model="description" ng-readonly="true">
+      </label>
+    </form>
+    <h3 id="campaign-heading11" style="color:#EF473A;text-align:center;">Tasks</h3>
+    <button id="campaign-button7" ng-show="isOwner" ng-click="addTask()" class="button button-balanced  button-block icon ion-android-add"></button>
+    <form id="campaign-form7" class="list">
+      <ion-toggle toggle-class="toggle-positive" id="campaign-toggle3" ng-repeat="task in tasks">{{task.title}}</ion-toggle>
+    </form>
+    <div id="campaign-button-bar3" class="button-bar">
+      <a ui-sref="tabsController.messageBoard({&quot;id&quot;:&quot;&quot;+id+&quot;&quot;})" id="campaign-button18" class="button button-positive  button-block">Message Board</a>
+      <a ui-sref="tabsController.members({&quot;id&quot;:&quot;&quot;+id+&quot;&quot;})" id="campaign-button16" class="button button-assertive  button-block">Members</a>
+    </div>
+  </ion-content>
+</ion-view>

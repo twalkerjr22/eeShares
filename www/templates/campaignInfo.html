@@ -1,0 +1,25 @@
+<ion-view title="Campaign Info" id="page10">
+  <ion-content padding="true" class="has-header">
+    <h2 id="campaignInfo-heading9" style="color:#EF473A;text-align:center;">{{name}}</h2>
+    <div class="spacer" style="width: 300px; height: 35px;"></div>
+    <form id="campaignInfo-form5" class="list">
+      <label class="item item-input readonly" id="campaignInfo-input14">
+        <span class="input-label">Name: </span>
+        <input type="text" placeholder="" ng-model="name" ng-readonly="true">
+      </label>
+      <label class="item item-input readonly" id="campaignInfo-input15">
+        <span class="input-label">Goal:</span>
+        <input type="text" placeholder="" ng-model="goal" ng-readonly="true">
+      </label>
+      <label class="item item-input readonly" id="campaignInfo-input16">
+        <span class="input-label">Duration:</span>
+        <input type="text" placeholder="" ng-model="duration" ng-readonly="true">
+      </label>
+      <label class="item item-input" id="campaignInfo-input17">
+        <span class="input-label">Description:</span>
+        <input type="text" placeholder="" ng-model="description" ng-readonly="true">
+      </label>
+    </form>
+    <button id="campaignInfo-button20" ng-click="showModal()" class="button button-balanced  button-block">Join!</button>
+  </ion-content>
+</ion-view>

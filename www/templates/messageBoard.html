@@ -1,0 +1,16 @@
+<ion-view title="Message Board" id="page12">
+  <ion-content padding="true" class="has-header">
+    <ion-list id="messageBoard-list9">
+      <label class="item item-input" id="messageBoard-input20">
+        <input type="text" placeholder="Write a Message!" ng-model="message.message">
+      </label>
+    </ion-list>
+    <button id="messageBoard-button19" ng-click="send()" class="button button-assertive  button-block">Send!</button>
+    <ion-list id="messageBoard-list10">
+      <ion-item class="item-avatar" id="messageBoard-list-item7" ng-repeat="item in messages">
+        <h2>{{item.name}}</h2>
+        <p>{{item.message}}</p>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
