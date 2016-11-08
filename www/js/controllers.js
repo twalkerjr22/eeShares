@@ -228,7 +228,7 @@ function ($scope, $stateParams, buildingService, $state) {
     });
 
     $scope.doRefresh = function() {
-       $scope.id = $stateParams.id;
+        $scope.id = $stateParams.id;
 
         $scope.building = buildingService.getBuilding($scope.id)
         $scope.building.then(function(snapshot){
