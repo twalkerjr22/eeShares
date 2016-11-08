@@ -127,6 +127,18 @@ angular.module('app.routes', [])
     }
   })
 
+    .state('tabsController.help', {
+    url: '/help',
+	params: {
+		id: ""		
+},
+    views: {
+      'tab2': {
+        templateUrl: 'templates/help.html',
+      }
+    }
+  })
+
 $urlRouterProvider.otherwise('/login')
 
   
