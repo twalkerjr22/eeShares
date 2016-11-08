@@ -1,6 +1,10 @@
 <ion-view title="Building Info" id="page5">
   <ion-nav-title>Building Info</ion-nav-title>"
   <ion-content padding="true" class="has-header">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="doRefresh()">
+    </ion-refresher>
     <div class="list card" id="buildingInfo-card21">
       <h1 id="buildingInfo-heading3" style="color:#EF473A;">{{title}} </h1>
       <h3 id="buildingInfo-heading4" style="color:#000000;">Owner : {{owner}}</h3>

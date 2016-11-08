@@ -200,20 +200,19 @@ function ($scope, $stateParams, buildingService, $state) {
         ]
         }
     };
-    
+    $scope.getImage = function(){
+        var promise = buildingService.getURL($scope.image);
+        promise.then(function(val){
+            console.log("Success");
+            $scope.imgSrc = val
+        })
+        promise.catch(function(val){
+            console.log("fail")   
+        })
+    }
+
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         $scope.id = $stateParams.id;
-        
-        $scope.getImage = function(){
-            var promise = buildingService.getURL($scope.image);
-            promise.then(function(val){
-                console.log("Success");
-                $scope.imgSrc = val
-            })
-            promise.catch(function(val){
-                console.log("fail")   
-            })
-        }
 
         $scope.building = buildingService.getBuilding($scope.id)
         $scope.building.then(function(snapshot){
@@ -227,6 +226,23 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.getImage();
         })
     });
+
+    $scope.doRefresh = function() {
+       $scope.id = $stateParams.id;
+
+        $scope.building = buildingService.getBuilding($scope.id)
+        $scope.building.then(function(snapshot){
+            $scope.title = snapshot.val().title;
+            $scope.address = snapshot.val().address;
+            $scope.owner = snapshot.val().owner;
+            $scope.description = snapshot.val().description;
+            $scope.campaign = snapshot.val().campaign;
+            $scope.image = snapshot.val().image;
+            $scope.campaignVal = $scope.campaign == "NA" ? false : true;
+            $scope.getImage();
+        })
+        $scope.$broadcast('scroll.refreshComplete');
+    };
     
 }])
    
