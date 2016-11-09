@@ -90,12 +90,9 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         // handle event
-        console.log("State Params: ", data.stateParams);
+        $scope.empty = false;
         var currentUser = firebase.auth().currentUser;
-        console.log("check")
-        console.log(currentUser)
         if(currentUser != null){
-            console.log("123")
             var user = userService.getUser(currentUser.uid);
             user.then(function(user){
                 $scope.name = user.val().name;
@@ -104,9 +101,7 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
                     email: user.val().email,
                     buildings: user.val().buildings
                 }    
-                console.log($scope.userData)
             }).catch(function(val){
-                console.log(val)
             })
         
             $scope.campaignsFB = userService.getCampaignList(firebase.auth().currentUser.uid);
@@ -126,8 +121,13 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
                             'id' : campaign.campaignID
                         }
                         $scope.campaigns.push(item)
+                        if(item !== {}){
+                            $scope.empty = false;
+                        }
                     })
                 })
+                if($scope.campaigns.length === 0)
+                    $scope.empty = true
             })
         }
 
@@ -152,8 +152,13 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
                         'id' : campaign.campaignID
                     }
                     $scope.campaigns.push(item)
+                    if(item !== {}){
+                        $scope.empty = false;
+                    }
                 })
             })
+            if($scope.campaigns.length === 0)
+                $scope.empty = true
             $scope.$broadcast('scroll.refreshComplete');
         })
     };
