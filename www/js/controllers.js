@@ -90,7 +90,7 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         // handle event
-        $scope.empty = false;
+        $scope.empty = true;
         var currentUser = firebase.auth().currentUser;
         if(currentUser != null){
             var user = userService.getUser(currentUser.uid);
@@ -126,6 +126,7 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
                         }
                     })
                 })
+                console.log($scope.campaigns.length)
                 if($scope.campaigns.length === 0)
                     $scope.empty = true
             })

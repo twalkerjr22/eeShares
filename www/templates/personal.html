@@ -20,12 +20,15 @@
     <div ng-show="empty">
       <img src="https://s3.amazonaws.com/ionic-io-static/Gj0DtnuxQshXwLm9bUib_buildingtab.png" width="75%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">
     </div>
-    <button id="personal-button6" ng-click="logout()" style="border-radius:0px 0px 0px 0px;" class="button button-assertive  button-block">Logout</button>
+    <!--<button id="personal-button6" ng-click="logout()" style="border-radius:0px 0px 0px 0px;" class="button button-assertive  button-block">Logout</button>-->
 </ion-content>
 <ion-footer-bar align-title="center" class="bar-assertive">
   <div class="buttons">
     <button class="button" ui-sref="tabsController.help">Help</button>
   </div>
   <h1 class="title">EeShares!</h1>
+  <div class="buttons">
+    <button class="button" ng-click="logout()">Logout</button>
+  </div>
 </ion-footer-bar>
 </ion-view>
