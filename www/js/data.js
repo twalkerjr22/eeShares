@@ -88,15 +88,24 @@ angular.module('data', ['firebase'])
             getMessages: function(id){
                 return $firebaseArray(refDatabase.child('campaigns').child(id).child('messages'))
             }, 
-            getTasks: function(id){
-                return $firebaseArray(refDatabase.child('campaigns').child(id).child('tasks'))
+            getTasks: function(id, uid){
+                return $firebaseArray(refDatabase.child('campaigns').child(id).child("users").child(uid).child('tasks'))
             }, 
-            addTask: function(title, description, id){
-                var tasks = $firebaseArray(refDatabase.child('campaigns').child(id).child('tasks'))
+            addTask: function(title, description, id, uid){
+                var tasks = $firebaseArray(refDatabase.child('campaigns').child(id).child("users").child(uid).child('tasks'))
                 tasks.$add({
                     'title': title, 
-                    'description' : description
+                    'description' : description, 
+                    'completed' : false
                 })
+            }, 
+            updateTasks: function(id, uid, tasks){
+                angular.forEach(tasks, function(task){
+                    var taskRef = refDatabase.child('campaigns').child(id).child("users").child(uid).child("tasks").child(task.id).update({
+                        'completed': task.completed
+                    })
+                })
+
             }
             
         }

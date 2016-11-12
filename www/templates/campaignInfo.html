@@ -2,6 +2,7 @@
   <ion-content padding="true" class="has-header">
     <h2 id="campaignInfo-heading9" style="color:#EF473A;text-align:center;">{{name}}</h2>
     <div class="spacer" style="width: 300px; height: 35px;"></div>
+  
     <form id="campaignInfo-form5" class="list">
       <label class="item item-input readonly" id="campaignInfo-input14">
         <span class="input-label">Name: </span>
@@ -18,6 +19,10 @@
       <label class="item item-input" id="campaignInfo-input17">
         <span class="input-label">Description:</span>
         <input type="text" placeholder="" ng-model="description" ng-readonly="true">
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Milestone:</span>
+        <input type="text" placeholder="" ng-model="milestone" ng-readonly="true">
       </label>
     </form>
     <button id="campaignInfo-button20" ng-click="showModal()" class="button button-balanced  button-block">Join!</button>

@@ -42,7 +42,7 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
         'address' : '', 
         'owner' : '', 
         'description' : '', 
-        'image' : ''
+        'image' : '', 
     }
   
     $scope.modal = $ionicModal.fromTemplate(
@@ -181,10 +181,9 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, $state) {
     $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-    $scope.series = ['Series A', 'Series B'];
+    $scope.series = ['Series A'];
     $scope.data = [
         [65, 59, 80, 81, 56, 55, 40],
-        [28, 48, 40, 19, 86, 27, 90]
     ];
 
     $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
@@ -193,6 +192,7 @@ function ($scope, $stateParams, buildingService, $state) {
         yAxes: [
             {
             id: 'y-axis-1',
+            title: "Expenditure",
             type: 'linear',
             display: true,
             position: 'left'
@@ -228,6 +228,7 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.description = snapshot.val().description;
             $scope.campaign = snapshot.val().campaign;
             $scope.image = snapshot.val().image;
+            $scope.monthlyBill = snapshot.val().monthlyBill;
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
         })
@@ -388,6 +389,12 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $firebaseAuth, userService) {
     
+
+    $scope.$on("$ionicView.beforeEnter", function(event, data){
+
+
+    })
+
     $scope.id = $stateParams.id;
     $scope.campaign = campaignService.getCampaign($scope.id)
     $scope.joinData = {
@@ -401,7 +408,9 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         $scope.description = snapshot.val().description;
         $scope.key = snapshot.val().key;
         $scope.owner = snapshot.val().owner;
+        //$scope.milestone = snapshot.val().milestone;
     })
+    $scope.milestone = "$7,000"
     
     var user = userService.getUser(firebase.auth().currentUser.uid);
     user.then(function(user){
@@ -455,38 +464,46 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $firebaseAuth, userService) {
     
-    $scope.id = $stateParams.id;
-    $scope.campaign = campaignService.getCampaign($scope.id)
-    $scope.campaign.then(function(snapshot){
-        $scope.name = snapshot.val().name;
-        $scope.goal = snapshot.val().goal;
-        //$scope.owner = snapshot.val().owner;
-        $scope.duration = snapshot.val().duration;
-        $scope.description = snapshot.val().description;
-        $scope.key = snapshot.val().key;
-        $scope.owner = snapshot.val().owner;
-        $scope.isOwner = false;
-        if($scope.owner === firebase.auth().currentUser.uid) 
-            $scope.isOwner = true;
+    $scope.$on("$ionicView.beforeEnter", function(event, data){
+        $scope.id = $stateParams.id;
+        $scope.campaign = campaignService.getCampaign($scope.id)
+        $scope.campaign.then(function(snapshot){
+            $scope.name = snapshot.val().name;
+            $scope.goal = snapshot.val().goal;
+            //$scope.owner = snapshot.val().owner;
+            $scope.duration = snapshot.val().duration;
+            $scope.description = snapshot.val().description;
+            $scope.key = snapshot.val().key;
+            $scope.owner = snapshot.val().owner;
+            $scope.milestone = snapshot.val().milestone;
+            $scope.isOwner = false;
+            if($scope.owner === firebase.auth().currentUser.uid) 
+                $scope.isOwner = true;
 
-    })
-    
-    var user = userService.getUser(firebase.auth().currentUser.uid);
-    user.then(function(user){
-        $scope.userData = {
-            name: user.val().name,
-            email: user.val().email,
-            buildings: user.val().buildings
-        }    
+        })
+        $scope.milestone = "$7,000"
+        
+        var user = userService.getUser(firebase.auth().currentUser.uid);
+        user.then(function(user){
+            $scope.userData = {
+                id: firebase.auth().currentUser.uid,
+                name: user.val().name,
+                email: user.val().email,
+                buildings: user.val().buildings
+            }    
+            $scope.getTasks()
+
+        })
+        
+        $scope.data = {
+            'title' : '',
+            'description' : ''
+        }
+
     })
 
     $scope.addTask = function(){
         $scope.showModal()
-    }
-    
-    $scope.data = {
-        'title' : '',
-        'description' : ''
     }
   
     $scope.modal = $ionicModal.fromTemplate(
@@ -509,20 +526,47 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         $scope.modal.show()
     }
     $scope.closeModal = function(){
-        $scope.data.title = '';
-        $scope.data.description = '';
+        //$scope.data.title = '';
+        //$scope.data.description = '';
         $scope.modal.hide();
     }
     $scope.addItem = function(){
-        campaignService.addTask($scope.data.title, $scope.data.description, $scope.id);
+        $scope.usersFB = campaignService.getUserList($scope.id);
+        $scope.usersFB.$loaded()
+            .then(function(){
+            angular.forEach($scope.usersFB, function(user) {
+                campaignService.addTask($scope.data.title, $scope.data.description, $scope.id, user.$id);
+            })
+        })
+        //campaignService.addTask($scope.data.title, $scope.data.description, $scope.id);
         $scope.closeModal()
         $scope.getTasks()
     }
     
     $scope.getTasks = function(){
-        $scope.tasks = campaignService.getTasks($scope.id)
+        $scope.usersFB = campaignService.getUserList($scope.id);
+        $scope.usersFB.$loaded()
+            .then(function(){
+            angular.forEach($scope.usersFB, function(member) {
+                if(member.userID === $scope.userData.id){
+                    $scope.campaignUserID = member.$id
+                    $scope.tasks = campaignService.getTasks($scope.id, member.$id)
+                    return;
+                }
+            })
+        })
     }
-    $scope.getTasks()
+    $scope.logTasks = function(){
+        var Data = []
+        angular.forEach($scope.tasks, function(task) {
+            var item = {
+                id: task.$id,
+                completed: task.completed
+            }
+            Data.push(item);
+        })
+        campaignService.updateTasks($scope.id, $scope.campaignUserID, Data);
+    }
 }])
    
 .controller('membersCtrl', ['$scope', '$stateParams', 'campaignService', 'userService', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
