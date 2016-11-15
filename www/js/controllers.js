@@ -83,10 +83,10 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
     }
 }])
    
-.controller('personalCtrl', ['$scope', '$stateParams', '$ionicUser', '$firebaseAuth', '$state', 'userService', 'campaignService', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('personalCtrl', ['$scope', '$stateParams', '$ionicUser', '$firebaseAuth', '$state', 'userService', 'campaignService', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, campaignService) {
+function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, campaignService, $ionicPopup) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         // handle event
@@ -103,7 +103,20 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
                 }    
             }).catch(function(val){
             })
-        
+            
+            if(1){
+                $scope.showAlert = function() {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Daily Login!',
+                        template: 'Added 10 Points to Score!'
+                    });
+                    
+                    alertPopup.then(function(res) {
+                        console.log('Thank you for advice.');
+                    });
+                };
+            }
+            
             $scope.campaignsFB = userService.getCampaignList(firebase.auth().currentUser.uid);
             $scope.campaigns = []
             $scope.campaignsFB.$loaded()
@@ -628,4 +641,27 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     }    
     updateMessages()
 }])
+
+.controller('welcomeCtrl', ['$scope', '$stateParams', '$firebaseAuth', 'firebase', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
  
+    if($stateParams.flag == 1){
+
+        $scope.data = {
+            'email': '',
+            'password': ''
+        }
+
+
+        firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in.
+            $state.go('tabsController.personal')
+        } else {
+            // No user is signed in.
+        }
+        });
+    } 
+}])

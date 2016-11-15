@@ -139,7 +139,16 @@ angular.module('app.routes', [])
     }
   })
 
-$urlRouterProvider.otherwise('/login')
+  .state('welcome', {
+    url: '/welcome',
+    params: {
+      flag: 1,
+    },
+    templateUrl: 'templates/welcome.html',
+    controller: 'welcomeCtrl'
+  })
+
+$urlRouterProvider.otherwise('/welcome')
 
   
 
