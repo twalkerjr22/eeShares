@@ -511,17 +511,16 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                 .then(function(){
                     if($scope.daily == false){
                         campaignService.setDaily($scope.id, $scope.campaignUserID, $scope.score + 10)
-                        $scope.showAlert = function() {
+                        $scope.dailyAlert = function() {
                             var alertPopup = $ionicPopup.alert({
                                 title: 'Daily Login!',
                                 template: 'Added 10 Points to Score!'
                             });
                             
                             alertPopup.then(function(res) {
-                                console.log('Thank you for advice.');
                             });
                         };
-                        $scope.showAlert();
+                        $scope.dailyAlert();
                     }
                 })
             })
@@ -583,6 +582,16 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
             Data.push(item);
         })
         campaignService.updateTasks($scope.id, $scope.campaignUserID, Data);
+        $scope.logAlert = function() {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Tasks Logged!!',
+                template: '15 Points will be added for each task at the end of the day!'
+            });
+            
+            alertPopup.then(function(res) {
+            });
+        };
+        $scope.logAlert();
     }
 
     $scope.doRefresh = function() {
