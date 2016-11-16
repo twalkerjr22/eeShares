@@ -70,12 +70,24 @@ angular.module('data', ['firebase'])
             addUser: function(campaignID, userID){
                 var users = $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('users'))
                 users.$add({
-                    'userID': userID    
+                    'userID': userID, 
+                    'score': 0,
+                    'daily': false    
                 })
             }, 
+            getUserInfo: function(id, uid){
+                return $firebaseObject(refDatabase.child('campaigns').child(id).child("users").child(uid))
+            },
             getUserList: function(id){
                 return $firebaseArray(refDatabase.child('campaigns').child(id).child('users'));
             }, 
+            setDaily: function(id, uid, score){
+                var userRef = refDatabase.child('campaigns').child(id).child("users").child(uid).update({
+                    'score': score,
+                    'daily': true
+
+                })
+            },
             addMessage: function(id, name, date, message) {
                 var messages = $firebaseArray(refDatabase.child('campaigns').child(id).child('messages'))
                 messages.$add({
