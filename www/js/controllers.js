@@ -663,7 +663,8 @@ function ($scope, $stateParams, campaignService, userService, $state) {
             promise.then(function(val){
                 var item = {
                     'name': val.val().name,
-                    'id' : user.userID
+                    'id' : user.userID, 
+                    'score': user.score
                 }
                 $scope.users.push(item)
             })
