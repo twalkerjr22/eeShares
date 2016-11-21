@@ -9751,5 +9751,11 @@ a.button {
     color: white;
     margin: 0px; }
 
+.thumbnail{
+  height: 80px;
+  border-radius: 41px;
+  float: center;
+}
+
 .readonly label {
   style: readonly; }

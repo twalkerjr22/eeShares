@@ -83,10 +83,10 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
     }
 }])
    
-.controller('personalCtrl', ['$scope', '$stateParams', '$ionicUser', '$firebaseAuth', '$state', 'userService', 'campaignService',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('personalCtrl', ['$scope', '$stateParams', '$firebaseArray', '$firebaseAuth', '$state', 'userService', 'campaignService', '$cordovaCamera',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, campaignService) {
+function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userService, campaignService, $cordovaCamera) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         // handle event
@@ -96,10 +96,12 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
             var user = userService.getUser(currentUser.uid);
             user.then(function(user){
                 $scope.name = user.val().name;
+                $scope.icon = user.val().icon;
                 $scope.userData = {
                     name: user.val().name,
                     email: user.val().email,
-                    buildings: user.val().buildings
+                    buildings: user.val().buildings,
+                    icon: user.val().icon
                 }    
             }).catch(function(val){
             })
@@ -134,8 +136,43 @@ function ($scope, $stateParams, $ionicUser, $firebaseAuth, $state, userService, 
 
     });
 
+    $scope.addMedia = function(){
+        var options = {
+            quality: 75, 
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            allowEdit: true,
+            encodingTyoe: Camera.EncodingType.JPEG,
+            popoverOptions: CameraPopoverOptions,
+            targetWidth: 500,
+            targetHeight: 500,
+            saveToPhotoAlbum: false
+        }
+        $cordovaCamera.getPicture(options).then(function(imageData){
+            var promise = userService.setIcon(firebase.auth().currentUser.uid, imageData)
+            promise.then(function(item){
+                $scope.doRefresh()
+            }).catch(function(error){
+                console.log("error setting image")
+            })
+        }, function(error){
+            console.log("error")
+            console.log(error)
+        })
+    }
 
     $scope.doRefresh = function() {
+        var user = userService.getUser(currentUser.uid);
+        user.then(function(user){
+            $scope.name = user.val().name;
+            $scope.userData = {
+                name: user.val().name,
+                email: user.val().email,
+                buildings: user.val().buildings,
+                icon: user.val().icon
+            }    
+        }).catch(function(val){
+        })
         $scope.campaignsFB = userService.getCampaignList(firebase.auth().currentUser.uid);
         $scope.campaigns = []
         $scope.campaignsFB.$loaded()
@@ -644,6 +681,8 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
             'title' : '',
             'description' : ''
         }
+                $scope.$broadcast('scroll.refreshComplete');
+
     };
 
 }])
@@ -663,15 +702,39 @@ function ($scope, $stateParams, campaignService, userService, $state) {
             promise.then(function(val){
                 var item = {
                     'name': val.val().name,
+                    'icon': val.val().icon,
                     'id' : user.userID, 
                     'score': user.score
                 }
                 $scope.users.push(item)
             })
+            console.log($scope.users)
         })
         $state.reload
     })
 
+    $scope.doRefresh = function() {
+        $scope.usersFB = campaignService.getUserList(id);
+        $scope.users = []
+        $scope.usersFB.$loaded()
+            .then(function(){
+            angular.forEach($scope.usersFB, function(user) {
+                var promise = userService.getUser(user.userID)
+                promise.then(function(val){
+                    var item = {
+                        'name': val.val().name,
+                        'icon': val.val().icon,
+                        'id' : user.userID, 
+                        'score': user.score
+                    }
+                    $scope.users.push(item)
+                })
+                console.log($scope.users)
+            })
+            $state.reload
+        })
+        $scope.$broadcast('scroll.refreshComplete');
+    };
 
 }])
    
