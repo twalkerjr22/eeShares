@@ -197,6 +197,7 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
             })
             if($scope.campaigns.length === 0)
                 $scope.empty = true
+        }).then(function(){
             $scope.$broadcast('scroll.refreshComplete');
         })
     };
@@ -681,7 +682,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
             'title' : '',
             'description' : ''
         }
-                $scope.$broadcast('scroll.refreshComplete');
+        $scope.$broadcast('scroll.refreshComplete');
 
     };
 
