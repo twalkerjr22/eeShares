@@ -99,11 +99,11 @@ angular.module('data', ['firebase'])
 
                 })
             },
-            addMessage: function(id, name, date, message) {
+            addMessage: function(id, uid, date, message) {
                 var messages = $firebaseArray(refDatabase.child('campaigns').child(id).child('messages'))
                 messages.$add({
                     'date' : date, 
-                    'name' : name,
+                    'id' : uid,
                     'message' : message
                 })
                 
@@ -179,6 +179,9 @@ angular.module('data', ['firebase'])
         }, 
         getBuilding: function(id){
             return refDatabase.child('buildings').child(id).once('value')
+        }, 
+        getBillingData: function(id){
+            return $firebaseArray(refDatabase.child('buildings').child(id).child('pastbills'))
         }
         
     }

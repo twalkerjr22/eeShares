@@ -218,10 +218,9 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, $state) {
-    $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+    $scope.labels = [];
     $scope.series = ['Series A'];
     $scope.data = [
-        [65, 59, 80, 81, 56, 55, 40],
     ];
 
     $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
@@ -247,11 +246,9 @@ function ($scope, $stateParams, buildingService, $state) {
     $scope.getImage = function(){
         var promise = buildingService.getURL($scope.image);
         promise.then(function(val){
-            console.log("Success");
             $scope.imgSrc = val
         })
         promise.catch(function(val){
-            console.log("fail")   
         })
     }
 
@@ -269,6 +266,23 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.monthlyBill = snapshot.val().monthlyBill;
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
+        }).then(function(){
+            console.log("getting billing info")
+             var dataFB = buildingService.getBillingData($scope.id);
+             dataFB.$loaded()
+             .then(function(billingObject){
+                 console.log(billingObject)
+                 var bills = []
+                 var labels = []
+                 angular.forEach(billingObject, function(bill){
+                     console.log('biil')
+                     console.log(bill)
+                     bills.push(bill.bill);
+                     labels.push(bill.date);
+                 })
+                $scope.data.push(bills);
+                $scope.labels = labels;
+             })
         })
     });
 
@@ -750,13 +764,29 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     }
     
     var updateMessages = function() {
-        $scope.messages = campaignService.getMessages($scope.id);
+        $scope.messages = [];
+        $scope.messagesFB = campaignService.getMessages($scope.id);
+        $scope.messagesFB.$loaded()
+        .then(function(){
+            angular.forEach($scope.messagesFB, function(message){
+                var person = userService.getUser(message.id)
+                person.then(function(val){
+                    var item = {
+                        'name' : val.val().name,
+                        'message' : message.message, 
+                        'icon' : val.val().icon
+                    }
+                    $scope.messages.push(item);
+                })
+            })
+        })
     }
     // $scope.messageList = campaignService.getMessageList
     
     var user = userService.getUser(firebase.auth().currentUser.uid);
     user.then(function(user){
         $scope.userData = {
+
             name: user.val().name,
             email: user.val().email,
             buildings: user.val().buildings
@@ -766,7 +796,7 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     $scope.send = function(){
         if($scope.message.message === '')
             return
-        campaignService.addMessage($scope.id, $scope.userData.name, new Date().getTime() / 1000, $scope.message.message)
+        campaignService.addMessage($scope.id, firebase.auth().currentUser.uid, new Date().getTime() / 1000, $scope.message.message)
         $scope.message.message = ''
         updateMessages()
     }    

@@ -9,6 +9,7 @@
     <button id="messageBoard-button19" ng-click="send()" class="button button-assertive  button-block">Send!</button>
     <ion-list id="messageBoard-list10">
       <ion-item class="item-avatar" id="messageBoard-list-item7" ng-repeat="item in messages">
+        <img src="data:image/jpeg;base64,{{item.icon}}">
         <h2>{{item.name}}</h2>
         <p>{{item.message}}</p>
       </ion-item>
