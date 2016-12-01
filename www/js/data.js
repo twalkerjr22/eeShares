@@ -44,6 +44,9 @@ angular.module('data', ['firebase'])
                 return $firebaseArray(refDatabase.child('users').child(id).update({
                     'icon': image
                 }))
+            }, 
+            checkUpdate: function(){
+                return $firebaseObject(refDatabase.child('update'));
             }
         }
         return data

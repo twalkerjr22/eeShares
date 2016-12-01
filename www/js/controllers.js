@@ -90,13 +90,25 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
     }
 }])
    
-.controller('personalCtrl', ['$scope', '$stateParams', '$firebaseArray', '$firebaseAuth', '$state', 'userService', 'campaignService', '$cordovaCamera',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('personalCtrl', ['$scope', '$stateParams', '$firebaseArray', '$firebaseAuth', '$state', 'userService', 'campaignService', '$cordovaCamera', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userService, campaignService, $cordovaCamera) {
+function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userService, campaignService, $cordovaCamera, $ionicPopup) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         // handle event
+        $scope.update = userService.checkUpdate();
+        $scope.update.$loaded()
+        .then(function(){
+            var alertPopup = $ionicPopup.alert({
+                title: 'Update!',
+                template: 'Update Available!', 
+            });
+            
+            alertPopup.then(function(res) {
+            });
+        })
+
         $scope.empty = true;
         var currentUser = firebase.auth().currentUser;
         if(currentUser != null){
