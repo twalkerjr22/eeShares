@@ -11,8 +11,7 @@
     <ion-list id="buildings-list5">
       <ion-item class="item-thumbnail-left" id="buildings-list-item3" ui-sref="tabsController.buildingInfo({&quot;id&quot;:&quot;&quot;+building.$id+&quot;&quot;})" ng-repeat="building in buildings">
         <img src="{{building.imageURL}}">
-        <h2>{{building.title}}</h2>
-        <br>
+        <h3>{{building.title}}</h2>
         <p style="white-space:normal;">{{building.description}}</p>
       </ion-item>
     </ion-list>

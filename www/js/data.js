@@ -81,7 +81,12 @@ angular.module('data', ['firebase'])
                         'userID': userID, 
                         'score': 0,
                         'daily': false, 
-                        'tasks': tasks
+                        'tasks': tasks, 
+                        'prizes': {
+                            'tv': 0, 
+                            'starbucks': 0,
+                            'maryland': 0
+                        }
                     })
                 })
                 
@@ -135,6 +140,16 @@ angular.module('data', ['firebase'])
                     })
                 })
 
+            }, 
+            getCampaignUser: function(id, uid){
+                return $firebaseArray(refDatabase.child('campaigns').child(id).child("users").child(uid))
+            }, 
+            savePrizes: function(id, uid, tv, umd, star){
+                var prize = refDatabase.child('campaigns').child(id).child("users").child(uid).child('prizes').update({
+                    'maryland' : umd, 
+                    'starbucks' : star, 
+                    'tv' : tv
+                })
             }
             
         }
@@ -172,8 +187,6 @@ angular.module('data', ['firebase'])
             })
         },
         getURL: function(imageName){
-            console.log("asd")
-            console.log(imageName)
             var promise = imagesRef.child(imageName).getDownloadURL()
             return promise;
         }, 
@@ -182,6 +195,9 @@ angular.module('data', ['firebase'])
         }, 
         getBillingData: function(id){
             return $firebaseArray(refDatabase.child('buildings').child(id).child('pastbills'))
+        }, 
+        getCurrentBill: function(id){
+            return $firebaseObject(refDatabase.child('buildings').child(id).child('monthlyBill'))
         }
         
     }

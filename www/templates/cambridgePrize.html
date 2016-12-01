@@ -1,0 +1,38 @@
+<ion-view title="Prizes">
+    <ion-nav-title>Prizes</ion-nav-title>"
+  <ion-content padding="true" class="has-header">
+    <h1 style="color:#000000;text-align:center;">Points</h1>
+    <h2 style="color:#33CD5F;text-align:center;">{{score}}</h2>
+    <div class="spacer" style="width: 300px; height: 22px;"></div>
+    <button class="button button-positive  button-block" ng-click="save()">Save Prize Points!</button>
+    <ion-list>
+      <ion-item class="item-thumbnail-left">
+        <img src="https://s3.amazonaws.com/ionic-io-static/DFCh7g7Tz6n2qkneb3FU_TV.jpg">
+        <h2>TV</h2>
+        <p style="white-space:normal;">Points: {{points.tvPoints}}</p>
+      </ion-item>
+      <label class="item item-input">
+        <span class="input-label">Enter Points for Prize: </span>
+        <input type="number" placeholder="" ng-model="points.tvPoints">
+      </label>
+      <ion-item class="item-thumbnail-left">
+        <img src="https://s3.amazonaws.com/ionic-io-static/FFpKjVc6S36VODc5v4fw_maryland_shirt.jpg">
+        <h2>Maryland Apparel</h2>
+        <p style="white-space:normal;">Points: {{points.marylandPoints}}</p>
+      </ion-item>
+      <label class="item item-input">
+        <span class="input-label">Enter Points for Prize: </span>
+        <input type="number" placeholder="" ng-model="points.marylandPoints">
+      </label>
+      <ion-item class="item-thumbnail-left">
+        <img src="https://s3.amazonaws.com/ionic-io-static/l3nrMJeRDWII8XG8kl0A_starbucks.jpg">
+        <h2>Starbucks Gift Card</h2>
+        <p style="white-space:normal;">Points: {{points.starbucksPoints}}</p>
+      </ion-item>
+      <label class="item item-input">
+        <span class="input-label">Enter Points for Prize: </span>
+        <input type="number" placeholder="" ng-model="points.starbucksPoints">
+      </label>
+    </ion-list>
+  </ion-content>
+</ion-view>

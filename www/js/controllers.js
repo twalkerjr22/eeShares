@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
   
-.controller('buildingsCtrl', ['$scope', '$stateParams', 'buildingService', '$ionicModal', '$q', '$rootScope', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('buildingsCtrl', ['$scope', '$stateParams', 'buildingService', '$ionicModal', '$q', '$rootScope', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $state) {
+function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $state, $ionicPopup) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         $scope.getImage = function(image){
@@ -66,7 +66,14 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
     }) 
         
     $scope.showModal = function(){
-        $scope.modal.show()
+        var alertPopup = $ionicPopup.alert({
+            title: 'Feature Only Available for Admins!',
+            template: 'See Help for contact information to request access'
+        });
+        
+        alertPopup.then(function(res) {
+        });
+        //$scope.modal.show()
     }
     $scope.closeModal = function(){
         $scope.data.title = '';
@@ -460,9 +467,8 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         $scope.description = snapshot.val().description;
         $scope.key = snapshot.val().key;
         $scope.owner = snapshot.val().owner;
-        //$scope.milestone = snapshot.val().milestone;
+        $scope.milestone = snapshot.val().milestone;
     })
-    $scope.milestone = "$7,000"
     
     var user = userService.getUser(firebase.auth().currentUser.uid);
     user.then(function(user){
@@ -522,7 +528,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         $scope.campaign.then(function(snapshot){
             $scope.name = snapshot.val().name;
             $scope.goal = snapshot.val().goal;
-            //$scope.owner = snapshot.val().owner;
+            $scope.building = snapshot.val().building;
             $scope.duration = snapshot.val().duration;
             $scope.description = snapshot.val().description;
             $scope.key = snapshot.val().key;
@@ -573,6 +579,20 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                             });
                         };
                         $scope.dailyAlert();
+                    }
+                })
+            }).then(function(){
+                $scope.currentBillFB = buildingService.getCurrentBill($scope.building)
+                $scope.currentBillFB.$loaded()
+                .then(function(item){
+                    $scope.currentBill = item.$value;
+                }).then(function(){
+                    var number1 = Number($scope.milestone.replace(/[^0-9\.]+/g,""));
+                    var number2 = Number($scope.currentBill.toString().replace(/[^0-9\.]+/g,""));
+                    if(number1 < number2){
+                        $scope.success = false;
+                    } else {
+                        $scope.success = true;
                     }
                 })
             })
@@ -825,4 +845,69 @@ function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
         }
         });
     } 
+}])
+
+
+.controller('cambridgePrizeCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', 'userService', '$firebaseAuth', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams, buildingService, campaignService, userService, $firebaseAuth, $ionicPopup) {
+    
+    $scope.$on("$ionicView.beforeEnter", function(event, data){
+        $scope.campaignID = $stateParams.campaignID;
+        $scope.userID = $stateParams.userID;
+        $scope.campaignUser = campaignService.getCampaignUser($scope.campaignID, $scope.userID)
+        $scope.points = {
+            'tvPoints' : 0,
+            'marylandPoints' : 0,
+            'starbucksPoints' : 0
+        }
+        $scope.campaignUser.$loaded()
+        .then(function(user){
+            $scope.score = $scope.campaignUser[2].$value
+            $scope.points.tvPoints = $scope.campaignUser[1].tv 
+            $scope.points.marylandPoints = $scope.campaignUser[1].maryland 
+            $scope.points.starbucksPoints = $scope.campaignUser[1].starbucks 
+        })
+
+    })
+
+    $scope.save = function(){
+        if($scope.points.starbucksPoints >= 0 && $scope.points.tvPoints >= 0 && $scope.points.marylandPoints >= 0){
+            if(($scope.points.tvPoints + $scope.points.marylandPoints + $scope.points.starbucksPoints) > Number($scope.score)){
+                $scope.points.tvPoints = $scope.campaignUser[1].tv 
+                $scope.points.marylandPoints = $scope.campaignUser[1].maryland 
+                $scope.points.starbucksPoints = $scope.campaignUser[1].starbucks
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Nice Try!',
+                    template: 'Collective points are more than your total!'
+                });
+                
+                alertPopup.then(function(res) {
+                });
+            } else{
+                campaignService.savePrizes($scope.campaignID, $scope.userID, $scope.points.tvPoints, $scope.points.marylandPoints, $scope.points.starbucksPoints);
+
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Saved!',
+                    template: 'Your points have been saved!'
+                });
+                
+                alertPopup.then(function(res) {
+                });
+            }
+        } else{
+            $scope.points.tvPoints = $scope.campaignUser[1].tv 
+            $scope.points.marylandPoints = $scope.campaignUser[1].maryland 
+            $scope.points.starbucksPoints = $scope.campaignUser[1].starbucks
+            var alertPopup = $ionicPopup.alert({
+                title: 'Oops!',
+                template: 'Enter Valid Points'
+            });
+            
+            alertPopup.then(function(res) {
+            });
+        }
+    }
+
 }])

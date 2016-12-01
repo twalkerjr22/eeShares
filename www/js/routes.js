@@ -114,6 +114,20 @@ angular.module('app.routes', [])
     }
   })
 
+    .state('tabsController.cambridgePrize', {
+    url: '/cambridgePrize',
+	params: {
+		campaignID: "0",
+		userID: "0"		
+},
+    views: {
+      'tab2': {
+        templateUrl: 'templates/cambridgePrize.html',
+        controller: 'cambridgePrizeCtrl'
+      }
+    }
+  })
+
   .state('tabsController.messageBoard', {
     url: '/messageBoard',
 	params: {
