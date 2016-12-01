@@ -110,7 +110,7 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
                 });
             }
         })
-        
+
         $scope.empty = true;
         var currentUser = firebase.auth().currentUser;
         if(currentUser != null){
@@ -183,6 +183,7 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
     }
 
     $scope.doRefresh = function() {
+        var currentUser = firebase.auth().currentUser;
         var user = userService.getUser(currentUser.uid);
         user.then(function(user){
             $scope.name = user.val().name;
@@ -218,9 +219,9 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
             })
             if($scope.campaigns.length === 0)
                 $scope.empty = true
-        }).then(function(){
-            $scope.$broadcast('scroll.refreshComplete');
         })
+        $scope.$broadcast('scroll.refreshComplete');
+    
     };
 
 
