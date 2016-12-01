@@ -100,15 +100,17 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
         $scope.update = userService.checkUpdate();
         $scope.update.$loaded()
         .then(function(){
-            var alertPopup = $ionicPopup.alert({
-                title: 'Update!',
-                template: 'Update Available!', 
-            });
-            
-            alertPopup.then(function(res) {
-            });
+            if($scope.update.$value == 1){
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Update!',
+                    template: 'Update Available!', 
+                });
+                
+                alertPopup.then(function(res) {
+                });
+            }
         })
-
+        
         $scope.empty = true;
         var currentUser = firebase.auth().currentUser;
         if(currentUser != null){
