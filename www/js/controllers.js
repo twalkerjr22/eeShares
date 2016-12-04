@@ -183,6 +183,7 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
     }
 
     $scope.doRefresh = function() {
+        $scope.empty = true;
         var currentUser = firebase.auth().currentUser;
         var user = userService.getUser(currentUser.uid);
         user.then(function(user){
@@ -923,6 +924,49 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
             alertPopup.then(function(res) {
             });
         }
+    }
+
+}])
+
+
+.controller('helpCtrl', ['$scope', '$stateParams', 'userService', '$firebaseAuth', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams, userService, $firebaseAuth, $ionicPopup) {
+    
+    var currentUser = firebase.auth().currentUser;
+    if(currentUser != null){
+        var user = userService.getUser(currentUser.uid);
+        user.then(function(user){
+            $scope.name = user.val().name;
+            $scope.icon = user.val().icon;
+            $scope.email = user.val().email;
+            $scope.userData = {
+                name: user.val().name,
+                email: user.val().email,
+                buildings: user.val().buildings,
+                icon: user.val().icon
+            }    
+        }).catch(function(val){
+        })
+    }
+
+    $scope.reset = function(){
+        var auth = firebase.auth();
+        var emailAddress = $scope.email;
+
+        auth.sendPasswordResetEmail(emailAddress).then(function() {
+        // Email sent.
+            var alertPopup = $ionicPopup.alert({
+                title: 'Reset Email Sent',
+                template: 'Check Email to Reset Password'
+            });
+            
+            alertPopup.then(function(res) {
+            });
+        }, function(error) {
+        // An error happened.
+        });
     }
 
 }])

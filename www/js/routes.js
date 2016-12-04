@@ -149,6 +149,7 @@ angular.module('app.routes', [])
     views: {
       'tab2': {
         templateUrl: 'templates/help.html',
+        controller: 'helpCtrl',
       }
     }
   })
