@@ -649,6 +649,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         $scope.modal.hide();
     }
     $scope.addItem = function(){
+        campaignService.addTaskToCampaign($scope.data.title, $scope.data.description, $scope.id, user.$id);
         angular.forEach($scope.usersFB, function(user) {
             campaignService.addTask($scope.data.title, $scope.data.description, $scope.id, user.$id);
         })

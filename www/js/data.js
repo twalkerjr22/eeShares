@@ -122,13 +122,15 @@ angular.module('data', ['firebase'])
             getTasks: function(id, uid){
                 return $firebaseArray(refDatabase.child('campaigns').child(id).child("users").child(uid).child('tasks'))
             }, 
-            addTask: function(title, description, id, uid){
+            addTaskToCampaign: function(title, description, id, uid){
                 var tasksCampaign = $firebaseArray(refDatabase.child('campaigns').child(id).child("tasks"))
                 tasksCampaign.$add({
                     'title': title, 
                     'description' : description, 
                     'completed': false
                 })
+            },  
+            addTask: function(title, description, id, uid){
                 var tasks = $firebaseArray(refDatabase.child('campaigns').child(id).child("users").child(uid).child('tasks'))
                 tasks.$add({
                     'title': title, 
