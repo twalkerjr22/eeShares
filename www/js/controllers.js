@@ -286,7 +286,7 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.description = snapshot.val().description;
             $scope.campaign = snapshot.val().campaign;
             $scope.image = snapshot.val().image;
-            $scope.monthlyBill = snapshot.val().monthlyBill;
+            $scope.monthlyBill = snapshot.val().currentTotal;
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
         }).then(function(){
@@ -300,7 +300,7 @@ function ($scope, $stateParams, buildingService, $state) {
                  angular.forEach(billingObject, function(bill){
                      console.log('biil')
                      console.log(bill)
-                     bills.push(bill.bill);
+                     bills.push(bill.total);
                      labels.push(bill.date);
                  })
                 $scope.data.push(bills);
@@ -322,6 +322,23 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.image = snapshot.val().image;
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
+        }).then(function(){
+            console.log("getting billing info")
+             var dataFB = buildingService.getBillingData($scope.id);
+             dataFB.$loaded()
+             .then(function(billingObject){
+                 console.log(billingObject)
+                 var bills = []
+                 var labels = []
+                 angular.forEach(billingObject, function(bill){
+                     console.log('biil')
+                     console.log(bill)
+                     bills.push(bill.total);
+                     labels.push(bill.date);
+                 })
+                $scope.data.push(bills);
+                $scope.labels = labels;
+             })
         })
         $scope.$broadcast('scroll.refreshComplete');
     };
