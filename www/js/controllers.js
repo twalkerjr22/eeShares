@@ -1,4 +1,4 @@
-angular.module('app.controllers', [])
+angular.module('app.controllers', ['highcharts-ng'])
   
 .controller('buildingsCtrl', ['$scope', '$stateParams', 'buildingService', '$ionicModal', '$q', '$rootScope', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
@@ -241,31 +241,6 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, $state) {
-    $scope.labels = [];
-    $scope.series = ['Series A'];
-    $scope.data = [
-    ];
-
-    $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
-    $scope.options = {
-        scales: {
-        yAxes: [
-            {
-            id: 'y-axis-1',
-            title: "Expenditure",
-            type: 'linear',
-            display: true,
-            position: 'left'
-            },
-            {
-            id: 'y-axis-2',
-            type: 'linear',
-            display: true,
-            position: 'right'
-            }
-        ]
-        }
-    };
     $scope.getImage = function(){
         var promise = buildingService.getURL($scope.image);
         promise.then(function(val){
@@ -277,7 +252,8 @@ function ($scope, $stateParams, buildingService, $state) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         $scope.id = $stateParams.id;
-
+        $scope.labels = [];
+        $scope.data = [];
         $scope.building = buildingService.getBuilding($scope.id)
         $scope.building.then(function(snapshot){
             $scope.title = snapshot.val().title;
@@ -286,32 +262,62 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.description = snapshot.val().description;
             $scope.campaign = snapshot.val().campaign;
             $scope.image = snapshot.val().image;
-            $scope.monthlyBill = snapshot.val().currentTotal;
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
         }).then(function(){
-            console.log("getting billing info")
              var dataFB = buildingService.getBillingData($scope.id);
              dataFB.$loaded()
              .then(function(billingObject){
-                 console.log(billingObject)
-                 var bills = []
-                 var labels = []
+                 var water = {name: 'water', data: []}
+                 var steam = {name: 'steam', data: []}
+                 var electric = {name: 'water', data: []}
+                 var total = {name: 'total', data: []}                 
                  angular.forEach(billingObject, function(bill){
-                     console.log('biil')
-                     console.log(bill)
-                     bills.push(bill.total);
-                     labels.push(bill.date);
+                     water.data.push(bill.water);
+                     steam.data.push(bill.steam);
+                     electric.data.push(bill.electric);
+                     total.data.push(bill.total);
+                     $scope.labels.push(bill.date);
                  })
-                $scope.data.push(bills);
-                $scope.labels = labels;
+                $scope.data.push(water);
+                $scope.data.push(steam);
+                $scope.data.push(electric);
+                $scope.data.push(total);
              })
+        }).then(function(){
+             $scope.chartConfig = {
+                title: {
+                    text: $scope.title + ' Utility Costs',
+                },
+                xAxis: {
+                    categories: $scope.labels
+                },
+                yAxis: {
+                    title: {
+                        text: 'Cost ($)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                series: $scope.data
+            }
+
         })
     });
 
     $scope.doRefresh = function() {
         $scope.id = $stateParams.id;
-
+        $scope.labels = [];
+        $scope.data = [];
         $scope.building = buildingService.getBuilding($scope.id)
         $scope.building.then(function(snapshot){
             $scope.title = snapshot.val().title;
@@ -323,22 +329,53 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
         }).then(function(){
-            console.log("getting billing info")
              var dataFB = buildingService.getBillingData($scope.id);
              dataFB.$loaded()
              .then(function(billingObject){
-                 console.log(billingObject)
-                 var bills = []
-                 var labels = []
+                 var water = {name: 'water', data: []}
+                 var steam = {name: 'steam', data: []}
+                 var electric = {name: 'water', data: []}
+                 var total = {name: 'total', data: []}                 
                  angular.forEach(billingObject, function(bill){
-                     console.log('biil')
-                     console.log(bill)
-                     bills.push(bill.total);
-                     labels.push(bill.date);
+                     water.data.push(bill.water);
+                     steam.data.push(bill.steam);
+                     electric.data.push(bill.electric);
+                     total.data.push(bill.total);
+                     $scope.labels.push(bill.date);
                  })
-                $scope.data.push(bills);
-                $scope.labels = labels;
+                $scope.data.push(water);
+                $scope.data.push(steam);
+                $scope.data.push(electric);
+                $scope.data.push(total);
              })
+        }).then(function(){
+             $scope.chartConfig = {
+                title: {
+                    text: $scope.title + ' Utility Costs',
+                    x: -20 //center
+                },
+                xAxis: {
+                    categories: $scope.labels
+                },
+                yAxis: {
+                    title: {
+                        text: 'Cost ($)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                series: $scope.data
+            }
+
         })
         $scope.$broadcast('scroll.refreshComplete');
     };

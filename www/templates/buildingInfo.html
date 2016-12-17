@@ -1,6 +1,7 @@
 <ion-view title="Building Info" id="page5">
   <ion-nav-title>Building Info</ion-nav-title>"
-  <ion-content padding="true" class="has-header">
+  <ion-content padding="true
+  " class="has-header">
     <ion-refresher
       pulling-text="Pull to refresh..."
       on-refresh="doRefresh()">
@@ -13,14 +14,9 @@
       </div>
       <h4 id="buildingInfo-heading5" style="color:#000000;text-align:center;">Address : {{address}}</h4>
       <h4 id="buildingInfo-heading6" style="color:#000000;text-align:center;">Description : {{description}}</h4>
-      <h4 style="color:#000000;text-align:center;">Monthly Bill: ${{monthlyBill}}</h4>
+      <!--<h4 style="color:#000000;text-align:center;">Monthly Bill: {{monthlyBill}}</h4>-->
       <div class="card" >
-      <div class="item item-divider">
-        <h3 style="color:#000000;text-align:center;">Building Energy Statistics </h1>
-      </div>
-      <div class="item item-text-wrap">
-          <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-legend="true" chart-series="series" chart-options="{showTooltips: true}"></canvas>
-      </div>
+      <highchart id="chart1" config="chartConfig" class="span10"></highchart>
     </div>
       <a ui-sref="tabsController.addCampaign({&quot;buildingID&quot;:&quot;&quot;+id+&quot;&quot;,&quot;buildingTitle&quot;:&quot;&quot;+title+&quot;&quot;})" id="buildingInfo-button10" ng-click="addCampaign()" ng-hide="campaignVal"
         class="button button-assertive  button-block">Add Campaign!</a>
