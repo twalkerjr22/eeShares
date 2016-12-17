@@ -90,6 +90,8 @@ angular.module('data', ['firebase'])
                             'starbucks': 0,
                             'maryland': 0
                         }
+                    }).then(function(){
+                        users.$add(tasksFB)
                     })
                 })
                 
@@ -202,7 +204,7 @@ angular.module('data', ['firebase'])
             return $firebaseArray(refDatabase.child('buildings').child(id).child('pastbills'))
         }, 
         getCurrentBill: function(id){
-            return $firebaseObject(refDatabase.child('buildings').child(id).child('monthlyBill'))
+            return $firebaseObject(refDatabase.child('buildings').child(id).child('current'))
         }
         
     }
