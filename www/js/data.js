@@ -205,6 +205,9 @@ angular.module('data', ['firebase'])
         }, 
         getCurrentBill: function(id){
             return $firebaseObject(refDatabase.child('buildings').child(id).child('current'))
+        }, 
+        getExpectedBill: function(id){
+            return $firebaseObject(refDatabase.child('buildings').child(id).child('expected'))
         }
         
     }

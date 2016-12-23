@@ -652,13 +652,13 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                     }
                 })
             }).then(function(){
-                $scope.currentBillFB = buildingService.getCurrentBill($scope.building)
-                $scope.currentBillFB.$loaded()
+                $scope.expectedBillFB = buildingService.getExpectedBill($scope.building)
+                $scope.expectedBillFB.$loaded()
                 .then(function(item){
-                    $scope.currentBill = item.$value;
+                    $scope.expectedBill = item.total;
                 }).then(function(){
                     var number1 = Number($scope.milestone.replace(/[^0-9\.]+/g,""));
-                    var number2 = Number($scope.currentBill.toString().replace(/[^0-9\.]+/g,""));
+                    var number2 = Number($scope.expectedBill.toString().replace(/[^0-9\.]+/g,""));
                     if(number1 < number2){
                         $scope.success = false;
                     } else {
