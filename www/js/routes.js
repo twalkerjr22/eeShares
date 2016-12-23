@@ -163,6 +163,11 @@ angular.module('app.routes', [])
     controller: 'welcomeCtrl'
   })
 
+  .state('howTo', {
+    url: '/howTo',
+    templateUrl: 'templates/howTo.html',
+  })
+
 $urlRouterProvider.otherwise('/welcome')
 
   
