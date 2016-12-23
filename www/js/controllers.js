@@ -261,6 +261,7 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.owner = snapshot.val().owner;
             $scope.description = snapshot.val().description;
             $scope.campaign = snapshot.val().campaign;
+            $scope.dailyGoalCost = snapshot.val().dailyCostGoal;
             $scope.image = snapshot.val().image;
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
@@ -268,17 +269,20 @@ function ($scope, $stateParams, buildingService, $state) {
              var dataFB = buildingService.getBillingData($scope.id);
              dataFB.$loaded()
              .then(function(billingObject){
-                 var water = {name: 'water', data: []}
-                 var steam = {name: 'steam', data: []}
-                 var electric = {name: 'water', data: []}
-                 var total = {name: 'total', data: []}                 
+                 var water = {name: 'Water', data: []}
+                 var steam = {name: 'Steam', data: []}
+                 var electric = {name: 'Electric', data: []}
+                 var total = {name: 'Total', data: []}
+                 var goal = {name: 'Total Goal', data: []}                 
                  angular.forEach(billingObject, function(bill){
+                     goal.data.push($scope.dailyCostGoal);
                      water.data.push(bill.water);
                      steam.data.push(bill.steam);
                      electric.data.push(bill.electric);
                      total.data.push(bill.total);
                      $scope.labels.push(bill.date);
                  })
+                $scope.data.push(goal);
                 $scope.data.push(water);
                 $scope.data.push(steam);
                 $scope.data.push(electric);
