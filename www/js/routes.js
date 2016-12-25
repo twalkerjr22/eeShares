@@ -141,6 +141,20 @@ angular.module('app.routes', [])
     }
   })
 
+  .state('tabsController.campaignPictures', {
+    url: '/campaignPictures',
+	params: {
+		campaignID: "0",
+		userID: "0"		
+},
+    views: {
+      'tab2': {
+        templateUrl: 'templates/campaignPictures.html',
+        controller: 'campaignPicturesCtrl'
+      }
+    }
+  })
+
     .state('tabsController.help', {
     url: '/help',
 	params: {

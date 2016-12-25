@@ -857,6 +857,7 @@ function ($scope, $stateParams, campaignService, userService, $state) {
 function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     
     $scope.id = $stateParams.id
+    $scope.userID = firebase.auth().currentUser.uid
     $scope.message = {
         'message' : ''
     }
@@ -881,10 +882,9 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     }
     // $scope.messageList = campaignService.getMessageList
     
-    var user = userService.getUser(firebase.auth().currentUser.uid);
+    var user = userService.getUser($scope.userID);
     user.then(function(user){
         $scope.userData = {
-
             name: user.val().name,
             email: user.val().email,
             buildings: user.val().buildings
@@ -899,6 +899,99 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
         updateMessages()
     }    
     updateMessages()
+}])
+
+.controller('campaignPicturesCtrl', ['$scope', '$stateParams', 'campaignService', 'userService', '$ionicModal', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams, campaignService, userService, $ionicModal) {
+    
+    $scope.$on("$ionicView.beforeEnter", function(event, data){
+
+        $scope.campaignID = $stateParams.campaignID
+        $scope.userID = $stateParams.userID
+
+        var user = userService.getUser($scope.userID);
+        user.then(function(user){
+            $scope.userData = {
+                name: user.val().name,
+                email: user.val().email,
+                buildings: user.val().buildings
+            }    
+        })
+        var updatePictures = function() {
+            $scope.pictures = [];
+            $scope.picturesFB = campaignService.getPictures($scope.campaignID);
+            $scope.picturesFB.$loaded()
+            .then(function(){
+                angular.forEach($scope.picturesFB, function(picture){
+                    var item = {
+                        'name' : picture.name,
+                        'description' : picture.description, 
+                        'picture' : picture.picture
+                    }
+                    $scope.pictures.push(item);
+                })
+            })
+        }
+        updatePictures()
+    })
+
+    $scope.data = {
+        'description' : ''
+    }
+
+    $scope.addPicture = function(){
+        $scope.showModal()
+    }
+
+    $scope.addMedia = function(){
+        var options = {
+            quality: 75, 
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            allowEdit: true,
+            encodingTyoe: Camera.EncodingType.JPEG,
+            popoverOptions: CameraPopoverOptions,
+            targetWidth: 500,
+            targetHeight: 500,
+            saveToPhotoAlbum: false
+        }
+        $cordovaCamera.getPicture(options).then(function(imageData){
+            var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData)
+            promise.then(function(item){
+                updatePictures()
+            }).catch(function(error){
+                console.log("error setting image")
+            })
+        }, function(error){
+            console.log("error")
+            console.log(error)
+        })
+    }
+
+    $scope.modal = $ionicModal.fromTemplate(
+    "<ion-modal-view>" + 
+        "<ion-header-bar class='bar-balanced'>" +
+            "<h1 class='title'>Add a Picture</h1>" +
+            '<button class="button button-clear" ng-click="closeModal()">Close</button>' +
+        "</ion-header-bar>" +
+        "<ion-content class='padding'>" +
+            '<label class="item item-input"><input type="text" ng-model="data.description" placeholder="Description"></label>' +
+            "<button ng-click='addMedia()' class='button button-balanced button-block'>Select Picture</button>" + 
+        "</ion-content>" +
+    "</ion-modal-view",{
+        scope: $scope, 
+        animation : 'slide-in-up'
+    }) 
+        
+    $scope.showModal = function(){
+        $scope.modal.show()
+    }
+    $scope.closeModal = function(){
+        $scope.modal.hide();
+    }
+
 }])
 
 .controller('welcomeCtrl', ['$scope', '$stateParams', '$firebaseAuth', 'firebase', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

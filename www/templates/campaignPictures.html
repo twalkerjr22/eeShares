@@ -1,0 +1,15 @@
+<ion-view title="Campaign Pictures!">
+  <ion-content padding="true" class="has-header">
+    <button ng-click="addPicture()" class="button button-energized  button-block">Add a Picture!</button>
+    <div class="item item-body" ng-repeat="item in pictures">
+      <div class="show-list-numbers-and-dots">
+        <p style="margin-top:0px;color:#000000;">{{item.name}}</p>
+      </div>
+      <div class="show-list-numbers-and-dots">
+        <p style="color:#000000;">{{item.description}}</p>
+      </div>
+      <div style="margin: 0px; line-height: 250px; text-align: center; background-color: rgb(232, 235, 239);">
+        <img src="data:image/jpeg;base64,{{item.picture}}" style="display: block; width: 100%; height: auto; margin-left: auto; margin-right: auto;">      </div>
+    </div>
+  </ion-content>
+</ion-view>
