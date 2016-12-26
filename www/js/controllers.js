@@ -965,6 +965,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData)
             promise.then(function(item){
                 updatePictures()
+                $scope.closeModal()
             }).catch(function(error){
                 console.log("error setting image")
             })
