@@ -1,6 +1,10 @@
 <ion-view title="Message Board" id="page12">
   <ion-nav-title>Messages</ion-nav-title>"
   <ion-content padding="true" class="has-header">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="doRefresh()">
+    </ion-refresher>    
     <ion-list id="messageBoard-list9">
       <label class="item item-input" id="messageBoard-input20">
         <input type="text" placeholder="Write a Message!" ng-model="message.message">

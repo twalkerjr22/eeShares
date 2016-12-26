@@ -1,5 +1,9 @@
 <ion-view title="Campaign Pictures!">
   <ion-content padding="true" class="has-header">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="doRefresh()">
+    </ion-refresher>    
     <button ng-click="addPicture()" class="button button-energized  button-block">Add a Picture!</button>
     <div class="item item-body" ng-repeat="item in pictures">
       <div class="show-list-numbers-and-dots">

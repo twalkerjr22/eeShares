@@ -899,6 +899,10 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
         updateMessages()
     }    
     updateMessages()
+    $scope.doRefresh = function(){
+        updateMessages();
+        $scope.$broadcast('scroll.refreshComplete');
+    }
 }])
 
 .controller('campaignPicturesCtrl', ['$scope', '$stateParams', 'campaignService', 'userService', '$ionicModal', '$cordovaCamera', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
@@ -990,6 +994,11 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
     }
     $scope.closeModal = function(){
         $scope.modal.hide();
+    }
+    
+    $scope.doRefresh = function(){
+        updatePictures();
+        $scope.$broadcast('scroll.refreshComplete');
     }
 
 }])
