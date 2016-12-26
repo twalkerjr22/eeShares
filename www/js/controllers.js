@@ -910,10 +910,26 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, campaignService, userService, $ionicModal, $cordovaCamera) {
     
-    $scope.$on("$ionicView.beforeEnter", function(event, data){
+    $scope.campaignID = $stateParams.campaignID
+    $scope.userID = $stateParams.userID
+    
+    $scope.updatePictures = function() {
+        $scope.pictures = [];
+        $scope.picturesFB = campaignService.getPictures($scope.campaignID);
+        $scope.picturesFB.$loaded()
+        .then(function(){
+            angular.forEach($scope.picturesFB, function(picture){
+                var item = {
+                    'name' : picture.name,
+                    'description' : picture.description, 
+                    'picture' : picture.picture
+                }
+                $scope.pictures.push(item);
+            })
+        })
+    }
 
-        $scope.campaignID = $stateParams.campaignID
-        $scope.userID = $stateParams.userID
+    $scope.$on("$ionicView.beforeEnter", function(event, data){
 
         var user = userService.getUser($scope.userID);
         user.then(function(user){
@@ -923,21 +939,6 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                 buildings: user.val().buildings
             }    
         })
-        $scope.updatePictures = function() {
-            $scope.pictures = [];
-            $scope.picturesFB = campaignService.getPictures($scope.campaignID);
-            $scope.picturesFB.$loaded()
-            .then(function(){
-                angular.forEach($scope.picturesFB, function(picture){
-                    var item = {
-                        'name' : picture.name,
-                        'description' : picture.description, 
-                        'picture' : picture.picture
-                    }
-                    $scope.pictures.push(item);
-                })
-            })
-        }
         $scope.updatePictures()
     })
 
@@ -950,6 +951,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
     }
 
     $scope.addMedia = function(){
+        $scope.closeModal()
         var options = {
             quality: 75, 
             destinationType: Camera.DestinationType.DATA_URL,
@@ -964,7 +966,6 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
         $cordovaCamera.getPicture(options).then(function(imageData){
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
-                $scope.closeModal()
                 $scope.updatePictures()
             }).catch(function(error){
                 console.log("error setting image")
