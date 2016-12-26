@@ -862,7 +862,7 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
         'message' : ''
     }
     
-    var updateMessages = function() {
+    $scope.updateMessages = function() {
         $scope.messages = [];
         $scope.messagesFB = campaignService.getMessages($scope.id);
         $scope.messagesFB.$loaded()
@@ -896,11 +896,11 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
             return
         campaignService.addMessage($scope.id, firebase.auth().currentUser.uid, new Date().getTime() / 1000, $scope.message.message)
         $scope.message.message = ''
-        updateMessages()
+        $scope.updateMessages()
     }    
-    updateMessages()
+    $scope.updateMessages()
     $scope.doRefresh = function(){
-        updateMessages();
+        $scope.updateMessages();
         $scope.$broadcast('scroll.refreshComplete');
     }
 }])
@@ -923,7 +923,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                 buildings: user.val().buildings
             }    
         })
-        var updatePictures = function() {
+        $scope.updatePictures = function() {
             $scope.pictures = [];
             $scope.picturesFB = campaignService.getPictures($scope.campaignID);
             $scope.picturesFB.$loaded()
@@ -938,7 +938,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                 })
             })
         }
-        updatePictures()
+        $scope.updatePictures()
     })
 
     $scope.data = {
@@ -962,10 +962,10 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             saveToPhotoAlbum: false
         }
         $cordovaCamera.getPicture(options).then(function(imageData){
-            var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData)
+            var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
-                updatePictures()
                 $scope.closeModal()
+                $scope.updatePictures()
             }).catch(function(error){
                 console.log("error setting image")
             })
@@ -998,8 +998,9 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
     }
     
     $scope.doRefresh = function(){
-        updatePictures();
-        $scope.$broadcast('scroll.refreshComplete');
+        $scope.updatePictures()
+        $scope.$broadcast('scroll.refreshComplete')
+
     }
 
 }])

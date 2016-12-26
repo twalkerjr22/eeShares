@@ -161,12 +161,13 @@ angular.module('data', ['firebase'])
             getPictures: function(campaignID){
                 return $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('pictures'))
             }, 
-            addPicture: function(campaignID, name, description, data){
+            addPicture: function(campaignID, name, description, data, date){
                 var pics = $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('pictures'))
                 pics.$add({
                     'name': name, 
                     'description': description,
-                    'picture': data
+                    'picture': data, 
+                    'date': date
                 })
 
             }

@@ -5,7 +5,7 @@
       on-refresh="doRefresh()">
     </ion-refresher>    
     <button ng-click="addPicture()" class="button button-energized  button-block">Add a Picture!</button>
-    <div class="item item-body" ng-repeat="item in pictures">
+    <div class="item item-body" ng-repeat="item in pictures | orderBy:'item.date':true">
       <div class="show-list-numbers-and-dots">
         <p style="margin-top:0px;color:#000000;">{{item.name}}</p>
       </div>
