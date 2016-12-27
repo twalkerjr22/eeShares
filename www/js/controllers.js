@@ -616,8 +616,8 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                 $scope.isOwner = true;
 
         })
-        $scope.campaignUserID = $firebaseAuth.currentUser.uid
-        var user = userService.getUser($scope.campaignUserID);
+        
+        var user = userService.getUser(firebase.auth().currentUser.uid);
         user.then(function(user){
             $scope.userData = {
                 id: firebase.auth().currentUser.uid,
@@ -626,47 +626,60 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                 buildings: user.val().buildings
             }    
         }).then(function(){
-            $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
-            $scope.userInfoFB.$loaded()
-            .then(function(item){
-                $scope.daily = item.daily
-                $scope.score = item.score
-            })
-            .then(function(){
-                if($scope.daily == false){
-                    campaignService.setDaily($scope.id, $scope.campaignUserID, $scope.score + 10)
-                    $scope.dailyAlert = function() {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'Daily Login!',
-                            template: 'Added 10 Points to Score!'
-                        });
-                        
-                        alertPopup.then(function(res) {
-                        });
-                    };
-                    $scope.dailyAlert();
-                }
-            })
-        }).then(function(){
-            $scope.expectedBillFB = buildingService.getExpectedBill($scope.building)
-            $scope.expectedBillFB.$loaded()
-            .then(function(item){
-                $scope.expectedBill = item.total;
+            $scope.usersFB = campaignService.getUserList($scope.id);
+            $scope.usersFB.$loaded()
+                .then(function(){
+                angular.forEach($scope.usersFB, function(member) {
+                    if(member.userID === $scope.userData.id){
+                        $scope.campaignUserID = member.$id
+                        $scope.getTasks()
+                        return;
+                    }
+                })
             }).then(function(){
-                var number1 = Number($scope.milestone.replace(/[^0-9\.]+/g,""));
-                var number2 = Number($scope.expectedBill.toString().replace(/[^0-9\.]+/g,""));
-                if(number1 < number2){
-                    $scope.success = false;
-                } else {
-                    $scope.success = true;
-                }
+                $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
+                $scope.userInfoFB.$loaded()
+                .then(function(item){
+                    $scope.daily = item.daily
+                    $scope.score = item.score
+                })
+                .then(function(){
+                    if($scope.daily == false){
+                        campaignService.setDaily($scope.id, $scope.campaignUserID, $scope.score + 10)
+                        $scope.dailyAlert = function() {
+                            var alertPopup = $ionicPopup.alert({
+                                title: 'Daily Login!',
+                                template: 'Added 10 Points to Score!'
+                            });
+                            
+                            alertPopup.then(function(res) {
+                            });
+                        };
+                        $scope.dailyAlert();
+                    }
+                })
+            }).then(function(){
+                $scope.expectedBillFB = buildingService.getExpectedBill($scope.building)
+                $scope.expectedBillFB.$loaded()
+                .then(function(item){
+                    $scope.expectedBill = item.total;
+                }).then(function(){
+                    var number1 = Number($scope.milestone.replace(/[^0-9\.]+/g,""));
+                    var number2 = Number($scope.expectedBill.toString().replace(/[^0-9\.]+/g,""));
+                    if(number1 < number2){
+                        $scope.success = false;
+                    } else {
+                        $scope.success = true;
+                    }
+                })
             })
         })
+        $scope.data = {
+            'title' : '',
+            'description' : ''
+        }
+
     })
-    $scope.data = {
-        'title' : '',
-        'description' : ''
-    }
 
     $scope.addTask = function(){
         $scope.showModal()
@@ -748,8 +761,8 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                 $scope.isOwner = true;
 
         })
-        $scope.campaignUserID = firebase.auth().currentUser.uid
-        var user = userService.getUser($scope.campaignUserID);
+        
+        var user = userService.getUser(firebase.auth().currentUser.uid);
         user.then(function(user){
             $scope.userData = {
                 id: firebase.auth().currentUser.uid,
@@ -758,11 +771,23 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                 buildings: user.val().buildings
             }    
         }).then(function(){
-            $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
-            $scope.userInfoFB.$loaded()
-            .then(function(item){
-                $scope.daily = item.daily
-                $scope.score = item.score
+            $scope.usersFB = campaignService.getUserList($scope.id);
+            $scope.usersFB.$loaded()
+                .then(function(){
+                angular.forEach($scope.usersFB, function(member) {
+                    if(member.userID === $scope.userData.id){
+                        $scope.campaignUserID = member.$id
+                        $scope.getTasks()
+                        return;
+                    }
+                })
+            }).then(function(){
+                $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
+                $scope.userInfoFB.$loaded()
+                .then(function(item){
+                    $scope.daily = item.daily
+                    $scope.score = item.score
+                })
             })
         })
         $scope.data = {
@@ -791,6 +816,7 @@ function ($scope, $stateParams, campaignService, userService, $state) {
                 var item = {
                     'name': val.val().name,
                     'icon': val.val().icon,
+                    'id' : user.userID, 
                     'score': user.score
                 }
                 $scope.users.push(item)
@@ -811,6 +837,7 @@ function ($scope, $stateParams, campaignService, userService, $state) {
                     var item = {
                         'name': val.val().name,
                         'icon': val.val().icon,
+                        'id' : user.userID, 
                         'score': user.score
                     }
                     $scope.users.push(item)
