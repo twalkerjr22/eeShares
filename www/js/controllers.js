@@ -905,10 +905,10 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     }
 }])
 
-.controller('campaignPicturesCtrl', ['$scope', '$stateParams', 'campaignService', 'userService', '$ionicModal', '$cordovaCamera', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('campaignPicturesCtrl', ['$scope', '$stateParams', 'campaignService', 'userService', '$ionicModal', '$cordovaCamera', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, campaignService, userService, $ionicModal, $cordovaCamera) {
+function ($scope, $stateParams, campaignService, userService, $ionicModal, $cordovaCamera, $ionicPopup) {
     
     $scope.campaignID = $stateParams.campaignID
     $scope.userID = $stateParams.userID
@@ -967,6 +967,14 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
                 $scope.updatePictures()
+                var alertPopup = $ionicPopup.alert({
+                    title: '50 Added Points!',
+                    template: 'Thanks for Sharing!'
+                });
+                
+                alertPopup.then(function(res) {
+                });
+                
             }).catch(function(error){
                 console.log("error setting image")
             })
