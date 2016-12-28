@@ -149,7 +149,6 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
                         }
                     })
                 })
-                console.log($scope.campaigns.length)
                 if($scope.campaigns.length === 0)
                     $scope.empty = true
             })
@@ -289,31 +288,62 @@ function ($scope, $stateParams, buildingService, $state) {
                 $scope.data.push(total);
              })
         }).then(function(){
-             $scope.chartConfig = {
-                title: {
-                    text: $scope.title + ' Utility Costs',
-                },
-                xAxis: {
-                    categories: $scope.labels
-                },
-                yAxis: {
-                    title: {
-                        text: 'Cost ($)'
+            $(function () { 
+                var myChart = Highcharts.chart('container', {
+                    chart: {
+                        type: 'line'
                     },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]
-                },
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle',
-                    borderWidth: 0
-                },
-                series: $scope.data
-            }
+                    title: {
+                        text: $scope.title + ' Utility Costs',
+                    },
+                    xAxis: {
+                        categories: $scope.labels
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Cost ($)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0
+                    },
+                    series: $scope.data
+            
+                });
+            });
+            //  $scope.chartConfig = {
+            //     title: {
+            //         text: $scope.title + ' Utility Costs',
+            //     },
+            //     xAxis: {
+            //         categories: $scope.labels
+            //     },
+            //     yAxis: {
+            //         title: {
+            //             text: 'Cost ($)'
+            //         },
+            //         plotLines: [{
+            //             value: 0,
+            //             width: 1,
+            //             color: '#808080'
+            //         }]
+            //     },
+            //     legend: {
+            //         layout: 'vertical',
+            //         align: 'right',
+            //         verticalAlign: 'middle',
+            //         borderWidth: 0
+            //     },
+            //     series: $scope.data
+            // }
 
         })
     });
@@ -356,32 +386,37 @@ function ($scope, $stateParams, buildingService, $state) {
                  $scope.data.push(total);
             })
         }).then(function(){
-             $scope.chartConfig = {
-                title: {
-                    text: $scope.title + ' Utility Costs',
-                    x: -20 //center
-                },
-                xAxis: {
-                    categories: $scope.labels
-                },
-                yAxis: {
-                    title: {
-                        text: 'Cost ($)'
+             $(function () { 
+                var myChart = Highcharts.chart('container', {
+                    chart: {
+                        type: 'line'
                     },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]
-                },
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle',
-                    borderWidth: 0
-                },
-                series: $scope.data
-            }
+                    title: {
+                        text: $scope.title + ' Utility Costs',
+                    },
+                    xAxis: {
+                        categories: $scope.labels
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Cost ($)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0
+                    },
+                    series: $scope.data
+            
+                });
+            });
 
         })
         $scope.$broadcast('scroll.refreshComplete');
