@@ -1055,7 +1055,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                         $scope.pictureAlert = function(){
                             var alertPopup = $ionicPopup.alert({
                                 title: '50 Added Points!',
-                                template: 'Thanks for Sharing!'
+                                template: 'Thanks for sharing your picture!'
                             });
                             
                             alertPopup.then(function(res) {
