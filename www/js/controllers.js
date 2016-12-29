@@ -1077,7 +1077,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                         });
                     }
                     $scope.test1();
-                    $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
+                    $scope.userInfoFB = campaignService.getUserInfo($scope.campaignID, $scope.campaignUserID)
                     $scope.userInfoFB.$loaded()
                     .then(function(item){
                         $scope.score = item.score
