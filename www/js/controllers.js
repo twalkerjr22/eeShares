@@ -555,10 +555,10 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
 
 }])
    
-.controller('campaignInfoCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', '$ionicModal', '$firebaseAuth', 'userService', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('campaignInfoCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', '$ionicModal', '$firebaseAuth', 'userService', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $firebaseAuth, userService) {
+function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $firebaseAuth, userService, $ionicPopup) {
     
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
@@ -581,8 +581,8 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         $scope.owner = snapshot.val().owner;
         $scope.milestone = snapshot.val().milestone;
     })
-    
-    var user = userService.getUser(firebase.auth().currentUser.uid);
+    $scope.userID = firebase.auth().currentUser.uid;
+    var user = userService.getUser($scope.userID);
     user.then(function(user){
         $scope.userData = {
             name: user.val().name,
@@ -618,8 +618,37 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     $scope.join = function(){
         if($scope.key.toString() === $scope.joinData.key.toString()){
             console.log("Success")
+            $scope.usersFB = campaignService.getUserList($scope.id);
+            $scope.usersFB.$loaded()
+            .then(function(){
+                angular.forEach($scope.usersFB, function(member) {
+                    if(member.userID === $scope.userID){
+                        $scope.dailyAlert = function() {
+                            var alertPopup = $ionicPopup.alert({
+                                title: 'Already Joined!',
+                                template: 'You are already a part of this campaign'
+                            });
+                            
+                            alertPopup.then(function(res) {
+                            });
+                        };
+                        $scope.dailyAlert();
+                        return;
+                    }
+                })
+            })
             userService.addCampaign(firebase.auth().currentUser.uid, $scope.id)
             campaignService.addUser($scope.id, firebase.auth().currentUser.uid)
+            $scope.dailyAlert = function() {
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Already Joined!',
+                    template: 'You are already a part of this campaign'
+                });
+                
+                alertPopup.then(function(res) {
+                });
+            };
+            $scope.dailyAlert();
             $scope.closeModal()
         } else{
             console.log("fail")
@@ -1002,14 +1031,40 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
                 $scope.updatePictures()
-                var alertPopup = $ionicPopup.alert({
-                    title: '50 Added Points!',
-                    template: 'Thanks for Sharing!'
-                });
-                
-                alertPopup.then(function(res) {
-                });
-                
+                .then(function(){
+                    $scope.usersFB = campaignService.getUserList($scope.campaignID);
+                    $scope.usersFB.$loaded()
+                        .then(function(){
+                        angular.forEach($scope.usersFB, function(member) {
+                            if(member.userID === $scope.userID){
+                                $scope.campaignUserID = member.$id
+                                return;
+                            }
+                        })
+                    })
+                })
+                .then(function(){
+                    $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
+                    $scope.userInfoFB.$loaded()
+                    .then(function(item){
+                        $scope.score = item.score
+                    
+                    })
+                })
+                .then(function(){
+                    campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
+                })
+                .then(function(){
+                    var alertPopup = $ionicPopup.alert({
+                        title: '50 Added Points!',
+                        template: 'Thanks for Sharing!'
+                    });
+                    
+                    alertPopup.then(function(res) {
+                    });
+                    alertPopup();
+                })
+
             }).catch(function(error){
                 console.log("error setting image")
             })

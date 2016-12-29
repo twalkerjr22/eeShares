@@ -110,7 +110,7 @@ angular.module('data', ['firebase'])
             },
             addPoints: function(id, uid, score){
                 var userRef = refDatabase.child('campaigns').child(id).child("users").child(uid).update({
-                    'score': score,
+                    'score': score
                 })
             },
             addMessage: function(id, uid, date, message) {
