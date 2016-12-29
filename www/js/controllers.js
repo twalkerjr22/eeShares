@@ -1034,7 +1034,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
                 $scope.updatePictures()
-                var one = function(){
+                var one = function(callback){
                     $scope.test = function(){
                         var alertPopup = $ionicPopup.alert({
                             title: '50 AddedsdfsdfsdfPoints!',
@@ -1054,18 +1054,19 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                             }
                         })
                     })
+                    callback();
                 } 
                 var two = function(callback){
-                    $scope.test = function(){
+                    $scope.test1 = function(){
                         var alertPopup = $ionicPopup.alert({
-                            title: '50 AddedsdfsasdasdasdasdasddfsdfPoints!',
+                            title: '5aa0 AddedsdfsasdasdasdasdasddfsdfPoints!',
                             template: 'Thanksdfsdfs for Sharing!'
                         });
                         
                         alertPopup.then(function(res) {
                         });
                     }
-                    $scope.test();
+                    $scope.test1();
                     $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
                     $scope.userInfoFB.$loaded()
                     .then(function(item){
@@ -1073,7 +1074,17 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     })
                     callback();
                 }
-                var three = function(callback){
+                var three = function(){
+                    $scope.test2 = function(){
+                        var alertPopup = $ionicPopup.alert({
+                            title: '50 !',
+                            template: 'Thanksdfsdfs for Sharing!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    }
+                    $scope.test2();
                     campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
                     $scope.pictureAlert = function(){
                         var alertPopup = $ionicPopup.alert({
@@ -1085,11 +1096,10 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                         });
                     }
                     $scope.pictureAlert();
-                    callback()
                 }
-                three(function(){
+                one(function(){
                     two(function(){
-                        one();
+                        three();
                     });
                 });
             }).catch(function(error){
