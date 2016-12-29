@@ -637,18 +637,20 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                     }
                 })
             })
-            userService.addCampaign(firebase.auth().currentUser.uid, $scope.id)
-            campaignService.addUser($scope.id, firebase.auth().currentUser.uid)
-            $scope.dailyAlert = function() {
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Already Joined!',
-                    template: 'You are already a part of this campaign'
-                });
-                
-                alertPopup.then(function(res) {
-                });
-            };
-            $scope.dailyAlert();
+            .then(function(){
+                userService.addCampaign(firebase.auth().currentUser.uid, $scope.id)
+                campaignService.addUser($scope.id, firebase.auth().currentUser.uid)
+                $scope.dailyAlert = function() {
+                    var alertPopup = $ionicPopup.alert({
+                        title: 'Already Joined!',
+                        template: 'You are already a part of this campaign'
+                    });
+                    
+                    alertPopup.then(function(res) {
+                    });
+                };
+                $scope.dailyAlert();
+            })
             $scope.closeModal()
         } else{
             console.log("fail")

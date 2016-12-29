@@ -173,7 +173,7 @@ angular.module('data', ['firebase'])
                     'picture': data, 
                     'date': date
                 })
-
+                return pics;
             }
             
         }
