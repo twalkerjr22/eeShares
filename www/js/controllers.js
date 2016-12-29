@@ -1046,61 +1046,26 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                         })
                     })
                 }
-                var two = function(calback){
+                var two = function(){
                     $scope.userInfoFB = campaignService.getUserInfo($scope.campaignID, $scope.campaignUserID)
-                    $scope.logAlert1 = function() {
-            var alertPopup = $ionicPopup.alert({
-                title: 'got the right user info!!',
-                template: '15 Points will be added for each task at the end of the day!'
-            });
-            
-            alertPopup.then(function(res) {
-            });
-        };
-        $scope.logAlert1();
                     $scope.userInfoFB.$loaded()
                     .then(function(item){
                         $scope.score = item.score
-                        $scope.logAlerta = function() {
+                        campaignService.addPoints($scope.campaignID, $scope.campaignUserID, $scope.score + 50);
+                        $scope.pictureAlert = function(){
                             var alertPopup = $ionicPopup.alert({
-                                title: 'should be calling 3!!',
-                                template: '15 Points will be added for each task at the end of the day!'
+                                title: '50 Added Points!',
+                                template: 'Thanks for Sharing!'
                             });
                             
                             alertPopup.then(function(res) {
                             });
-                        };
-                        $scope.logAlerta();
-                        callback()
+                        }
+                        $scope.pictureAlert();       
                     })
-                }
-                var three = function(){
-                    $scope.logAlert = function() {
-                        var alertPopup = $ionicPopup.alert({
-                            title: 'got to 3!!',
-                            template: '15 Points will be added for each task at the end of the day!'
-                        });
-                        
-                        alertPopup.then(function(res) {
-                        });
-                    };
-                    $scope.logAlert();
-                    campaignService.addPoints($scope.campaignID, $scope.campaignUserID, $scope.score + 50);
-                    $scope.pictureAlert = function(){
-                        var alertPopup = $ionicPopup.alert({
-                            title: '50 Added Points!',
-                            template: 'Thanks for Sharing!'
-                        });
-                        
-                        alertPopup.then(function(res) {
-                        });
-                    }
-                    $scope.pictureAlert();                    
                 }
                 one(function(){
-                    two(function(){
-                        three();
-                    })
+                    two()
                 })
 
             }).catch(function(error){
