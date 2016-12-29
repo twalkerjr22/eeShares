@@ -617,7 +617,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
 
     $scope.join = function(){
         if($scope.key.toString() === $scope.joinData.key.toString()){
-            console.log("Success")
+            $scope.alreadyJoined = 0;
             $scope.usersFB = campaignService.getUserList($scope.id);
             $scope.usersFB.$loaded()
             .then(function(){
@@ -633,23 +633,24 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                             });
                         };
                         $scope.dailyAlert();
-                        return;
+                        $scope.closeModal()
+                        $scope.alreadyJoined = 1;
                     }
                 })
-            })
-            .then(function(){
-                userService.addCampaign(firebase.auth().currentUser.uid, $scope.id)
-                campaignService.addUser($scope.id, firebase.auth().currentUser.uid)
-                $scope.dailyAlert = function() {
-                    var alertPopup = $ionicPopup.alert({
-                        title: 'Already Joined!',
-                        template: 'You are already a part of this campaign'
-                    });
-                    
-                    alertPopup.then(function(res) {
-                    });
-                };
-                $scope.dailyAlert();
+                if(alreadyJoined === 0){
+                    userService.addCampaign(firebase.auth().currentUser.uid, $scope.id)
+                    campaignService.addUser($scope.id, firebase.auth().currentUser.uid)
+                    $scope.dailyAlert = function() {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'Joined!',
+                            template: 'You have joined this campaign!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    };
+                    $scope.dailyAlert();
+                }
             })
             $scope.closeModal()
         } else{
@@ -1056,14 +1057,16 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
                 })
                 .then(function(){
-                    var alertPopup = $ionicPopup.alert({
-                        title: '50 Added Points!',
-                        template: 'Thanks for Sharing!'
-                    });
-                    
-                    alertPopup.then(function(res) {
-                    });
-                    alertPopup();
+                    $scope.pictureAlert = function(){
+                        var alertPopup = $ionicPopup.alert({
+                            title: '50 Added Points!',
+                            template: 'Thanks for Sharing!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    }
+                    $scope.pictureAlert();
                 })
 
             }).catch(function(error){

@@ -79,7 +79,7 @@ angular.module('data', ['firebase'])
             addUser: function(campaignID, userID){
                 var tasksFB = $firebaseObject(refDatabase.child('campaigns').child(campaignID).child('tasks'))
                 tasksFB.$loaded().then(function(tasks){
-                    var user = $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('users')).child(userID)
+                    var user = $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('users'))
                     user.$add({
                         'score': 0,
                         'daily': false, 
@@ -89,8 +89,6 @@ angular.module('data', ['firebase'])
                             'starbucks': 0,
                             'maryland': 0
                         }
-                    }).then(function(){
-                        user.$add(tasksFB)
                     })
                 })
                 
