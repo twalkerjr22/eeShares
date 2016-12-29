@@ -1032,9 +1032,9 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
         }
         $cordovaCamera.getPicture(options).then(function(imageData){
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
-            promise.then(function(item){
+            promise.then(function(){
                 $scope.updatePictures()
-                .then(function(){
+                return new Promise (function(resolve, reject){
                     $scope.usersFB = campaignService.getUserList($scope.campaignID);
                     $scope.usersFB.$loaded()
                         .then(function(){
@@ -1044,30 +1044,68 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                             }
                         })
                     })
+                    resolve();
                 })
                 .then(function(){
-                    $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
-                    $scope.userInfoFB.$loaded()
-                    .then(function(item){
-                        $scope.score = item.score
-                    
+                    return new Promise(function(resolve, reject){
+                        $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
+                        $scope.userInfoFB.$loaded()
+                        .then(function(item){
+                            $scope.score = item.score
+                        })
+                        resolve();
+                    }).then(function(){
+                        campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
+                        $scope.pictureAlert = function(){
+                            var alertPopup = $ionicPopup.alert({
+                                title: '50 Added Points!',
+                                template: 'Thanks for Sharing!'
+                            });
+                            
+                            alertPopup.then(function(res) {
+                            });
+                        }
+                        $scope.pictureAlert();
                     })
                 })
-                .then(function(){
-                    campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
-                })
-                .then(function(){
-                    $scope.pictureAlert = function(){
-                        var alertPopup = $ionicPopup.alert({
-                            title: '50 Added Points!',
-                            template: 'Thanks for Sharing!'
-                        });
+
+            // var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
+            // promise.then(function(){
+            //     $scope.updatePictures()
+            //     .then(function(){
+            //         $scope.usersFB = campaignService.getUserList($scope.campaignID);
+            //         $scope.usersFB.$loaded()
+            //             .then(function(){
+            //             angular.forEach($scope.usersFB, function(member) {
+            //                 if(member.userID === $scope.userID){
+            //                     $scope.campaignUserID = member.$id
+            //                 }
+            //             })
+            //         })
+            //     })
+            //     .then(function(){
+            //         $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
+            //         $scope.userInfoFB.$loaded()
+            //         .then(function(item){
+            //             $scope.score = item.score
+                    
+            //         })
+            //     })
+            //     .then(function(){
+            //         campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
+            //     })
+            //     .then(function(){
+            //         $scope.pictureAlert = function(){
+            //             var alertPopup = $ionicPopup.alert({
+            //                 title: '50 Added Points!',
+            //                 template: 'Thanks for Sharing!'
+            //             });
                         
-                        alertPopup.then(function(res) {
-                        });
-                    }
-                    $scope.pictureAlert();
-                })
+            //             alertPopup.then(function(res) {
+            //             });
+            //         }
+            //         $scope.pictureAlert();
+            //     })
 
             }).catch(function(error){
                 console.log("error setting image")
