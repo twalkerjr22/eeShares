@@ -1034,7 +1034,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
                 $scope.updatePictures()
-                var one = function(callback){
+                var one = function(){
                     $scope.test = function(){
                         var alertPopup = $ionicPopup.alert({
                             title: '50 AddedsdfsdfsdfPoints!',
@@ -1054,7 +1054,6 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                             }
                         })
                     })
-                    callback();
                 } 
                 var two = function(callback){
                     $scope.test = function(){
@@ -1074,7 +1073,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     })
                     callback();
                 }
-                var three = function(){
+                var three = function(callback){
                     campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
                     $scope.pictureAlert = function(){
                         var alertPopup = $ionicPopup.alert({
@@ -1086,10 +1085,11 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                         });
                     }
                     $scope.pictureAlert();
+                    callback()
                 }
-                one(function(){
+                three(function(){
                     two(function(){
-                        three();
+                        one();
                     });
                 });
             }).catch(function(error){
