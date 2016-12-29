@@ -1048,13 +1048,43 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                 }
                 var two = function(calback){
                     $scope.userInfoFB = campaignService.getUserInfo($scope.campaignID, $scope.campaignUserID)
+                    $scope.logAlert1 = function() {
+            var alertPopup = $ionicPopup.alert({
+                title: 'got the right user info!!',
+                template: '15 Points will be added for each task at the end of the day!'
+            });
+            
+            alertPopup.then(function(res) {
+            });
+        };
+        $scope.logAlert1();
                     $scope.userInfoFB.$loaded()
                     .then(function(item){
                         $scope.score = item.score
+                        $scope.logAlerta = function() {
+                            var alertPopup = $ionicPopup.alert({
+                                title: 'should be calling 3!!',
+                                template: '15 Points will be added for each task at the end of the day!'
+                            });
+                            
+                            alertPopup.then(function(res) {
+                            });
+                        };
+                        $scope.logAlerta();
                         callback()
                     })
                 }
                 var three = function(){
+                    $scope.logAlert = function() {
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'got to 3!!',
+                            template: '15 Points will be added for each task at the end of the day!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    };
+                    $scope.logAlert();
                     campaignService.addPoints($scope.campaignID, $scope.campaignUserID, $scope.score + 50);
                     $scope.pictureAlert = function(){
                         var alertPopup = $ionicPopup.alert({
