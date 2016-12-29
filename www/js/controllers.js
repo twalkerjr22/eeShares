@@ -1038,7 +1038,6 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                         angular.forEach($scope.usersFB, function(member) {
                             if(member.userID === $scope.userID){
                                 $scope.campaignUserID = member.$id
-                                return;
                             }
                         })
                     })
