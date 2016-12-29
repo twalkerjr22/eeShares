@@ -1037,7 +1037,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                 var one = function(callback){
                     $scope.test = function(){
                         var alertPopup = $ionicPopup.alert({
-                            title: '50 AddedsdfsdfsdfPoints!',
+                            title: 'one 1',
                             template: 'Thanksdfsdfs for Sharing!'
                         });
                         
@@ -1054,12 +1054,22 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                             }
                         })
                     })
+                    $scope.test4 = function(){
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'one 2',
+                            template: 'Thanksdfsdfs for Sharing!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    }
+                    $scope.test4();
                     callback();
                 } 
                 var two = function(callback){
                     $scope.test1 = function(){
                         var alertPopup = $ionicPopup.alert({
-                            title: '5aa0 AddedsdfsasdasdasdasdasddfsdfPoints!',
+                            title: 'two 1',
                             template: 'Thanksdfsdfs for Sharing!'
                         });
                         
@@ -1072,6 +1082,16 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     .then(function(item){
                         $scope.score = item.score
                     })
+                    $scope.test3 = function(){
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'two 2',
+                            template: 'Thanksdfsdfs for Sharing!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    }
+                    $scope.test3();
                     callback();
                 }
                 var three = function(){
@@ -1098,7 +1118,27 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     $scope.pictureAlert();
                 }
                 one(function(){
+                    $scope.test5 = function(){
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'one running 2',
+                            template: 'Thanksdfsdfs for Sharing!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    }
+                    $scope.test5();
                     two(function(){
+                        $scope.test6 = function(){
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'two running 3',
+                            template: 'Thanksdfsdfs for Sharing!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    }
+                    $scope.test6();
                         three();
                     });
                 });
