@@ -1041,9 +1041,9 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                         angular.forEach($scope.usersFB, function(member) {
                             if(member.userID === $scope.userID){
                                 $scope.campaignUserID = member.$id
+                                callback();
                             }
                         })
-                        callback();
                     })
                 }
                 var two = function(calback){
@@ -1055,7 +1055,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     })
                 }
                 var three = function(){
-                    campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
+                    campaignService.addPoints($scope.campaignID, $scope.campaignUserID, $scope.score + 50);
                     $scope.pictureAlert = function(){
                         var alertPopup = $ionicPopup.alert({
                             title: '50 Added Points!',
