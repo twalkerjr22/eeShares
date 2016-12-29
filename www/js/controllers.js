@@ -1034,6 +1034,16 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
                 $scope.updatePictures()
+                $scope.test = function(){
+                        var alertPopup = $ionicPopup.alert({
+                            title: '50 AddedsdfsdfsdfPoints!',
+                            template: 'Thanksdfsdfs for Sharing!'
+                        });
+                        
+                        alertPopup.then(function(res) {
+                        });
+                    }
+                    $scope.test();
                 function one(callback){
                     $scope.usersFB = campaignService.getUserList($scope.campaignID);
                     $scope.usersFB.$loaded()
@@ -1044,7 +1054,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                             }
                         })
                     })
-                    callback()
+                    callback();
                 } 
                 function two(callback){
                     $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
@@ -1052,7 +1062,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     .then(function(item){
                         $scope.score = item.score
                     })
-                    callback()
+                    callback();
                 }
                 function three(){
                     campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
@@ -1067,7 +1077,11 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     }
                     $scope.pictureAlert();
                 }
-                one(two(three()));
+                one(function(){
+                    two(function(){
+                        three();
+                    });
+                });
             }).catch(function(error){
                 console.log("error setting image")
             })
