@@ -1043,16 +1043,16 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                                 $scope.campaignUserID = member.$id
                             }
                         })
+                        callback();
                     })
-                    callback();
                 }
                 var two = function(calback){
                     $scope.userInfoFB = campaignService.getUserInfo($scope.campaignID, $scope.campaignUserID)
                     $scope.userInfoFB.$loaded()
                     .then(function(item){
                         $scope.score = item.score
+                        callback()
                     })
-                    callback()
                 }
                 var three = function(){
                     campaignService.addPoints($scope.campaignID, $scope.userID, $scope.score + 50);
