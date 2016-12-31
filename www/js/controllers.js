@@ -310,10 +310,10 @@ function ($scope, $stateParams, buildingService, $state) {
                         }]
                     },
                     legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'middle',
-                        borderWidth: 0
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        x: 0,
+                        y: 0
                     },
                     series: $scope.data
             
