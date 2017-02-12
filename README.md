@@ -1,9 +1,15 @@
 # eeShares
 
 Contact: Julien Homble : jhomble7@gmail.com
-
+Link to proposal: https://github.com/jhomble/eeShares/blob/master/EeShares%20Project.docx
 ## What is it
-
+EeShares stands for Energy Efficiency Sharing
+It is a mobile application designed to connect facility managers with the residents of its buildings.
+By connecting these two groups, the application aims to increase the energy awareness of the residents.
+Residents of buildings such as dorms, offices, labs, etc. do not have to pay utility bills, and thus do not consider them. There is plenty of simple tasks the residents could do to reduce energy costs but have no incentive to.
+The application makes it possible for residents to view the energy statistics of the building and complete tasks to save energy
+Each time a task is logged or the user uses the app, points are earned
+Points are used as a raffle to a prize list that will be released if the campaign goal is reached (More on this below)
 ###  Features
 
 #### Join Buildings
