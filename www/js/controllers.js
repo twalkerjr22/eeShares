@@ -371,34 +371,36 @@ function ($scope, $stateParams, buildingService, $state) {
                  var water = {name: 'Water', data: []}
                  var steam = {name: 'Steam', data: []}
                  var electric = {name: 'Electric', data: []}
-                 var total = {name: 'Total', data: []}   
-                 var goal = {name: 'Total Goal', data: []}              
+                 var total = {name: 'Total', data: []}
+                 var goal = {name: 'Total Goal', data: []}                 
                  angular.forEach(billingObject, function(bill){
-                     goal.data.push($scope.dailyCostGoal);
-                     water.data.push(bill.water);
-                     steam.data.push(bill.steam);
-                     electric.data.push(bill.electric);
-                     total.data.push(bill.total);
-                     $scope.labels.push(bill.date);
+                     var date = new Date(bill.date)
+                     goal.data.push([date.getTime(), $scope.dailyCostGoal]);
+                     water.data.push([date.getTime(), bill.water]);
+                     steam.data.push([date.getTime(), bill.steam]);
+                     electric.data.push([date.getTime(), bill.electric]);
+                     total.data.push([date.getTime(), bill.total]);
+                     $scope.labels.push([date.getTime(), bill.date]);
                  })
-                 $scope.data.push(goal);
-                 $scope.data.push(water);
-                 $scope.data.push(steam);
-                 $scope.data.push(electric);
-                 $scope.data.push(total);
-            })
+                $scope.data.push(goal);
+                $scope.data.push(water);
+                $scope.data.push(steam);
+                $scope.data.push(electric);
+                $scope.data.push(total);
+             })
         }).then(function(){
-             $(function () { 
-                var myChart = Highcharts.chart('container', {
+            console.log($scope.data);
+            $(function () { 
+                var myChart = Highcharts.stockChart('container', {
                     chart: {
                         type: 'line'
                     },
                     title: {
                         text: $scope.title + ' Utility Costs',
                     },
-                    xAxis: {
-                        categories: $scope.labels
-                    },
+                    // xAxis: {
+                    //     categories: $scope.labels
+                    // },
                     yAxis: {
                         title: {
                             text: 'Cost ($)'
@@ -410,10 +412,10 @@ function ($scope, $stateParams, buildingService, $state) {
                         }]
                     },
                     legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'middle',
-                        borderWidth: 0
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        x: 0,
+                        y: 0
                     },
                     series: $scope.data
             
