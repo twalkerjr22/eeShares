@@ -1,0 +1,11 @@
+<ion-view title="Buildings" id="page2">
+  <ion-content padding="true" class=" manual-remove-top-padding has-header">
+    <div style="margin-right:-20px;">
+      <button id="buildings-button1" ng-click="showModal()" style="left:-10px;" class="button button-balanced  button-full button-outline">Add Building</button>
+    </div>
+    <ion-list id="buildings-list1" ng-repeat="building in buildings track by $index" class="manual-list-fullwidth">
+      <ion-item class="item-icon-left" id="buildings-list-item1" ui-sref="tabsController.buildingInfo({&quot;id&quot;:&quot;&quot;+building.$id+&quot;&quot;})" ng-click="clicked()">
+        <i class="icon ion-ionic"></i>{{building.title}}</ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

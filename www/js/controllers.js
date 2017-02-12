@@ -274,12 +274,13 @@ function ($scope, $stateParams, buildingService, $state) {
                  var total = {name: 'Total', data: []}
                  var goal = {name: 'Total Goal', data: []}                 
                  angular.forEach(billingObject, function(bill){
-                     goal.data.push($scope.dailyCostGoal);
-                     water.data.push(bill.water);
-                     steam.data.push(bill.steam);
-                     electric.data.push(bill.electric);
-                     total.data.push(bill.total);
-                     $scope.labels.push(bill.date);
+                     var date = new Date(bill.date)
+                     goal.data.push([date.getTime(), $scope.dailyCostGoal]);
+                     water.data.push([date.getTime(), bill.water]);
+                     steam.data.push([date.getTime(), bill.steam]);
+                     electric.data.push([date.getTime(), bill.electric]);
+                     total.data.push([date.getTime(), bill.total]);
+                     $scope.labels.push([date.getTime(), bill.date]);
                  })
                 $scope.data.push(goal);
                 $scope.data.push(water);
@@ -288,17 +289,18 @@ function ($scope, $stateParams, buildingService, $state) {
                 $scope.data.push(total);
              })
         }).then(function(){
+            console.log($scope.data);
             $(function () { 
-                var myChart = Highcharts.chart('container', {
+                var myChart = Highcharts.stockChart('container', {
                     chart: {
                         type: 'line'
                     },
                     title: {
                         text: $scope.title + ' Utility Costs',
                     },
-                    xAxis: {
-                        categories: $scope.labels
-                    },
+                    // xAxis: {
+                    //     categories: $scope.labels
+                    // },
                     yAxis: {
                         title: {
                             text: 'Cost ($)'

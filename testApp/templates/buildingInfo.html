@@ -1,0 +1,15 @@
+<ion-view title="Building Info" id="page5">
+  <ion-content padding="true" class="has-header">
+    <div class="list card" id="buildingInfo-card21">
+      <h1 id="buildingInfo-heading3" style="color:#EF473A;">{{title}} </h1>
+      <h3 id="buildingInfo-heading4" style="color:#000000;">Owner : {{owner}}</h3>
+      <div class=" item item-image">
+        <img src="{{imgSrc}}" width="100%" height="auto" style="display: block; margin-left: auto; margin-right: auto;" ng-src="imgSrc">
+      </div>
+      <h4 id="buildingInfo-heading5" style="color:#000000;">Address : {{address}}</h4>
+      <h4 id="buildingInfo-heading6" style="color:#000000;">Description : {{description}}</h4>
+      <button id="buildingInfo-button10" ng-click="addCampaign()" ng-hide="campaignVal" class="button button-assertive  button-block">Add Campaign!</button>
+      <button id="buildingInfo-button11" ng-click="joinCampaign()" ng-show="campaignVal" class="button button-assertive  button-block">Join Campaign!</button>
+    </div>
+  </ion-content>
+</ion-view>
