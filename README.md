@@ -62,9 +62,16 @@ However whether the goal was reached can be obviously seen through the data and 
 ## Developers Guide
 
 ### Ionic
-
+The application was built using an Ionic framework
+We utilized the Ionic Creator tool to do a basic design of the mobile application and Ionic services in general for the rest of the design
+Ionic made it easy to build both the Android and IOS application at the same time
+Instead of building two seperate apps in their native languages, Ionic lets us build a web application and convert them to the mobile devices
+Ionic uses angular JS and their native libraries to build the web app, then a Cordova plugin to convert to mobile apps
 ### Firebase
-
+Firebase is Googles Backend as a service (BaaS)
+Firebase serves for us as our user authentication, security, and database 
+Firebase database is structured as a JSON tree  
+### UMD Data Warehouse 
 ### Angularjs
 
 ### Node Web Server Backend
