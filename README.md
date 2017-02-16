@@ -71,9 +71,15 @@ Ionic uses angular JS and their native libraries to build the web app, then a Co
 Firebase is Googles Backend as a service (BaaS)
 Firebase serves for us as our user authentication, security, and database 
 Firebase database is structured as a JSON tree  
+API can be found here: https://firebase.google.com/docs/web/setup
 ### UMD Data Warehouse 
+In order for our application to work, we need facility utility information
+For UMD, the utility information is found in the UMD Data Warehouse: https://www.oit.umd.edu/dataadmin/DataWarehouse/index.html
+We have been given login information and direct contacts with managers there to access the information we need
+In the warehouse we look for... 
 ### Angularjs
-
+Ionic uses AngularJS as its framework
+Angular allows us to manipulate the HTML page while receiving the information in the JS
 ### Node Web Server Backend
 
 
