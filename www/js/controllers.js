@@ -317,6 +317,9 @@ function ($scope, $stateParams, buildingService, $state) {
                         x: 0,
                         y: 0
                     },
+                    credits: {
+                        enabled: false
+                    },
                     series: $scope.data
             
                 });
@@ -1136,15 +1139,32 @@ function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
 }])
 
 
-.controller('cambridgePrizeCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', 'userService', '$firebaseAuth', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
+.controller('cambridgePrizeCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', 'userService', '$firebaseAuth', '$ionicPopup',
 function ($scope, $stateParams, buildingService, campaignService, userService, $firebaseAuth, $ionicPopup) {
     
     $scope.$on("$ionicView.beforeEnter", function(event, data){
+        // Get the ID for the campaign, and the user
         $scope.campaignID = $stateParams.campaignID;
         $scope.userID = $stateParams.userID;
         $scope.campaignUser = campaignService.getCampaignUser($scope.campaignID, $scope.userID)
+
+        // Get the prize list of the campaigns and create the object array of prizes to repeated on 
+        $scope.prizes = campaignService.getPrizes($scope.campaignID);
+        $scope.prizeList = [];
+        $scope.prizes.$loaded()
+        .then(function(prizes){
+            console.log(prizes)
+            angular.forEach(prizes, function(prize) {
+                var item = {
+                    name: prize.$id,
+                    picture: prize.picture,
+                    description: prize.description
+                }
+                $scope.prizeList.push(item);
+            })
+            console.log($scope.prizeList)
+        })
+
         $scope.points = {
             'tvPoints' : 0,
             'marylandPoints' : 0,

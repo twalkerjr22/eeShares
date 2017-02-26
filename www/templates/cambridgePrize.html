@@ -5,6 +5,20 @@
     <h2 style="color:#33CD5F;text-align:center;">{{score}}</h2>
     <div class="spacer" style="width: 300px; height: 7px;"></div>
     <button class="button button-positive  button-block" ng-click="save()">Save Prize Points!</button>
+    <div class="item item-body" ng-repeat="prize in prizeList">
+      <form class="list">
+        <ion-item class="item-thumbnail-left">
+          <img src="data:image/jpeg;base64,{{prize.picture}}">
+          <h2>{{prize.name}}</h2>
+          <p style="white-space:normal;">{{prize.description}}</p>
+        </ion-item>
+        <label class="item item-input">
+          <span class="input-label">Input</span>
+          <input type="text" placeholder="">
+        </label>
+      </form>
+    </div>
+    
     <ion-list>
       <ion-item class="item-thumbnail-left">
         <img src="https://s3.amazonaws.com/ionic-io-static/DFCh7g7Tz6n2qkneb3FU_TV.jpg">

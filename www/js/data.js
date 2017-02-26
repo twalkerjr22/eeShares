@@ -171,6 +171,9 @@ angular.module('data', ['firebase'])
                     'picture': data, 
                     'date': date
                 })
+            }, 
+            getPrizes: function(campaignID){
+                return $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('prizes'))
             }
             
         }
