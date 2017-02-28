@@ -153,11 +153,10 @@ angular.module('data', ['firebase'])
             getCampaignUser: function(id, uid){
                 return $firebaseArray(refDatabase.child('campaigns').child(id).child("users").child(uid))
             }, 
-            savePrizes: function(id, uid, tv, umd, star){
-                var prize = refDatabase.child('campaigns').child(id).child("users").child(uid).child('prizes').update({
-                    'maryland' : umd, 
-                    'starbucks' : star, 
-                    'tv' : tv
+            savePrizes: function(id, uid, prizes){
+                var prize = $firebaseArray(refDatabase.child('campaigns').child(id).child("users").child(uid).child('prizes'))
+                .update({
+                    prizes
                 })
             },
             getPictures: function(campaignID){
@@ -218,13 +217,13 @@ angular.module('data', ['firebase'])
             return refDatabase.child('buildings').child(id).once('value')
         }, 
         getBillingData: function(id){
-            return $firebaseArray(refDatabase.child('buildings').child(id).child('pastbills'))
+            return $firebaseArray(refDatabase.child('buildings').child(id).child('data'))
         }, 
         getCurrentBill: function(id){
             return $firebaseObject(refDatabase.child('buildings').child(id).child('current'))
         }, 
         getExpectedBill: function(id){
-            return $firebaseObject(refDatabase.child('buildings').child(id).child('expected'))
+            return $firebaseObject(refDatabase.child('buildings').child(id).child('expectedByMonthEnd'))
         }
         
     }

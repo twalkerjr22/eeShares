@@ -1,4 +1,4 @@
-angular.module('app.controllers', ['highcharts-ng'])
+angular.module('app.controllers', [])
   
 .controller('buildingsCtrl', ['$scope', '$stateParams', 'buildingService', '$ionicModal', '$q', '$rootScope', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
@@ -235,11 +235,11 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
         });
     }
 }])
-      
+
+// Building information Controller. Shows the Utility Data  
 .controller('buildingInfoCtrl', ['$scope', '$stateParams', 'buildingService', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, $state) {
+    // Helper function to access firebase storage images
     $scope.getImage = function(){
         var promise = buildingService.getURL($scope.image);
         promise.then(function(val){
@@ -253,6 +253,10 @@ function ($scope, $stateParams, buildingService, $state) {
         $scope.id = $stateParams.id;
         $scope.labels = [];
         $scope.data = [];
+        var dailyData = [];
+        var rollingAverageAllData = [];
+        
+        // Get Building Branch
         $scope.building = buildingService.getBuilding($scope.id)
         $scope.building.then(function(snapshot){
             $scope.title = snapshot.val().title;
@@ -265,42 +269,71 @@ function ($scope, $stateParams, buildingService, $state) {
             $scope.campaignVal = $scope.campaign == "NA" ? false : true;
             $scope.getImage();
         }).then(function(){
+            // Get the Utility Information for highcharts
+            // dataFB structure:
+                // [0] = 30DayExtrapolate -> what will the cost be if value stays the same for 30 days
+                // [1] = dailyUtilityCosts -> list of all the daily costs
+                // [2] = mostRecentUtilityCost -> single object of last cost 
+                // [3] = rollingAverageAll -> what is the rolling average of data throughout history
+                // [4] = rollingAverageMonthly -> what is the rolling average per month 
              var dataFB = buildingService.getBillingData($scope.id);
+             // Get the daily data 
              dataFB.$loaded()
              .then(function(billingObject){
-                 var water = {name: 'Water', data: []}
-                 var steam = {name: 'Steam', data: []}
-                 var electric = {name: 'Electric', data: []}
-                 var total = {name: 'Total', data: []}
-                 var goal = {name: 'Total Goal', data: []}                 
-                 angular.forEach(billingObject, function(bill){
-                     var date = new Date(bill.date)
-                     goal.data.push([date.getTime(), $scope.dailyCostGoal]);
-                     water.data.push([date.getTime(), bill.water]);
-                     steam.data.push([date.getTime(), bill.steam]);
-                     electric.data.push([date.getTime(), bill.electric]);
-                     total.data.push([date.getTime(), bill.total]);
-                     $scope.labels.push([date.getTime(), bill.date]);
-                 })
-                $scope.data.push(goal);
-                $scope.data.push(water);
-                $scope.data.push(steam);
-                $scope.data.push(electric);
-                $scope.data.push(total);
+                console.log(billingObject)
+                var water = {name: 'Water', data: []}
+                var steam = {name: 'Steam', data: []}
+                var electric = {name: 'Electric', data: []}
+                var total = {name: 'Total', data: []}
+                var goal = {name: 'Total Goal', data: []}                 
+                angular.forEach(billingObject[1].all, function(bill){
+                    var date = new Date(bill.date)
+                    goal.data.push([date.getTime(), $scope.dailyCostGoal]);
+                    water.data.push([date.getTime(), bill.water]);
+                    steam.data.push([date.getTime(), bill.steam]);
+                    electric.data.push([date.getTime(), bill.electric]);
+                    total.data.push([date.getTime(), bill.total]);
+                    $scope.labels.push([date.getTime(), bill.date]);
+                })
+                dailyData.push(goal);
+                dailyData.push(water);
+                dailyData.push(steam);
+                dailyData.push(electric);
+                dailyData.push(total);
+                $scope.data.push(dailyData);
+                // Now get rolling average all data
+                var water = {name: 'Water', data: []}
+                var steam = {name: 'Steam', data: []}
+                var electric = {name: 'Electric', data: []}
+                var total = {name: 'Total', data: []}
+                var goal = {name: 'Total Goal', data: []}      
+                angular.forEach(billingObject[3], function(bill){
+                    if(bill === null || bill === 'rollingAverageAll')
+                        return;
+                    var date = new Date(bill.date)
+                    goal.data.push([date.getTime(), $scope.dailyCostGoal]);
+                    water.data.push([date.getTime(), bill.water]);
+                    steam.data.push([date.getTime(), bill.steam]);
+                    electric.data.push([date.getTime(), bill.electric]);
+                    total.data.push([date.getTime(), bill.total]);
+                })
+                rollingAverageAllData.push(goal);
+                rollingAverageAllData.push(water);
+                rollingAverageAllData.push(steam);
+                rollingAverageAllData.push(electric);
+                rollingAverageAllData.push(total);
+                $scope.data.push(rollingAverageAllData)
              })
         }).then(function(){
-            console.log($scope.data);
+            // Set up the highstock for the dailyCost
             $(function () { 
-                var myChart = Highcharts.stockChart('container', {
+                var myChart = Highcharts.stockChart('dailyCost', {
                     chart: {
                         type: 'line'
                     },
                     title: {
-                        text: $scope.title + ' Utility Costs',
+                        text: $scope.title + ' Daily Costs',
                     },
-                    // xAxis: {
-                    //     categories: $scope.labels
-                    // },
                     yAxis: {
                         title: {
                             text: 'Cost ($)'
@@ -320,36 +353,44 @@ function ($scope, $stateParams, buildingService, $state) {
                     credits: {
                         enabled: false
                     },
-                    series: $scope.data
+                    series: $scope.data[0]
             
                 });
             });
-            //  $scope.chartConfig = {
-            //     title: {
-            //         text: $scope.title + ' Utility Costs',
-            //     },
-            //     xAxis: {
-            //         categories: $scope.labels
-            //     },
-            //     yAxis: {
-            //         title: {
-            //             text: 'Cost ($)'
-            //         },
-            //         plotLines: [{
-            //             value: 0,
-            //             width: 1,
-            //             color: '#808080'
-            //         }]
-            //     },
-            //     legend: {
-            //         layout: 'vertical',
-            //         align: 'right',
-            //         verticalAlign: 'middle',
-            //         borderWidth: 0
-            //     },
-            //     series: $scope.data
-            // }
-
+        })
+        .then(function(){
+            // Setup the highstock for the rollingAverageAll
+            $(function () { 
+                var myChart = Highcharts.stockChart('rollingAverageAll', {
+                    chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: $scope.title + ' Rolling Average',
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Cost ($)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    legend: {
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        x: 0,
+                        y: 0
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: $scope.data[1]
+            
+                });
+            });
         })
     });
 
@@ -1146,78 +1187,79 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
         // Get the ID for the campaign, and the user
         $scope.campaignID = $stateParams.campaignID;
         $scope.userID = $stateParams.userID;
+
+        // Get the campaigns info on the user
         $scope.campaignUser = campaignService.getCampaignUser($scope.campaignID, $scope.userID)
+        // Array of the points for each prize - firebase alphabetizes them so it should match campaign ordering
+        var userPoints = []
+        $scope.campaignUser.$loaded()
+        .then(function(user){
+            // Get the point distribution for the user
+            userPoints = $.map(user[1], function(value, index) {
+                return [value];
+            });
+            // Take off the id and priority
+            userPoints.pop()
+            userPoints.pop()
+            $scope.score = $scope.campaignUser[2].$value
+        })
 
         // Get the prize list of the campaigns and create the object array of prizes to repeated on 
         $scope.prizes = campaignService.getPrizes($scope.campaignID);
         $scope.prizeList = [];
         $scope.prizes.$loaded()
         .then(function(prizes){
-            console.log(prizes)
-            angular.forEach(prizes, function(prize) {
+            angular.forEach(prizes, function(prize, i) {
                 var item = {
                     name: prize.$id,
                     picture: prize.picture,
-                    description: prize.description
+                    description: prize.description,
+                    score: userPoints[i]
                 }
                 $scope.prizeList.push(item);
             })
-            console.log($scope.prizeList)
-        })
-
-        $scope.points = {
-            'tvPoints' : 0,
-            'marylandPoints' : 0,
-            'starbucksPoints' : 0
-        }
-        $scope.campaignUser.$loaded()
-        .then(function(user){
-            $scope.score = $scope.campaignUser[2].$value
-            $scope.points.tvPoints = $scope.campaignUser[1].tv 
-            $scope.points.marylandPoints = $scope.campaignUser[1].maryland 
-            $scope.points.starbucksPoints = $scope.campaignUser[1].starbucks 
-        })
-
+        })      
     })
 
     $scope.save = function(){
-        if($scope.points.starbucksPoints >= 0 && $scope.points.tvPoints >= 0 && $scope.points.marylandPoints >= 0){
-            if(($scope.points.tvPoints + $scope.points.marylandPoints + $scope.points.starbucksPoints) > Number($scope.score)){
-                $scope.points.tvPoints = $scope.campaignUser[1].tv 
-                $scope.points.marylandPoints = $scope.campaignUser[1].maryland 
-                $scope.points.starbucksPoints = $scope.campaignUser[1].starbucks
+        var total = 0;
+        var prizeArray = []
+        // Go through the scores of each prize
+        angular.forEach($scope.prizeList, function(prize){
+            var temp = {}
+            total += prize.score;
+            // Create the array to save back to firebase
+            temp[prize.name] = prize.score;
+            prizeArray.push(temp)
+            // Check for negative score
+            if(prize.score < 0){
                 var alertPopup = $ionicPopup.alert({
-                    title: 'Nice Try!',
-                    template: 'Collective points are more than your total!'
+                    title: 'Oops!',
+                    template: 'Enter Valid Points'
                 });
-                
-                alertPopup.then(function(res) {
-                });
-            } else{
-                campaignService.savePrizes($scope.campaignID, $scope.userID, $scope.points.tvPoints, $scope.points.marylandPoints, $scope.points.starbucksPoints);
-
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Saved!',
-                    template: 'Your points have been saved!'
-                });
-                
-                alertPopup.then(function(res) {
-                });
+                alertPopup.then(function(res) {});
+                return;
             }
-        } else{
-            $scope.points.tvPoints = $scope.campaignUser[1].tv 
-            $scope.points.marylandPoints = $scope.campaignUser[1].maryland 
-            $scope.points.starbucksPoints = $scope.campaignUser[1].starbucks
+        })
+        // Check for going over total score
+        if(total > Number($scope.score)){
             var alertPopup = $ionicPopup.alert({
-                title: 'Oops!',
-                template: 'Enter Valid Points'
+                title: 'Nice Try!',
+                template: 'Collective points are more than your total!'
             });
-            
-            alertPopup.then(function(res) {
+            alertPopup.then(function(res) {});
+        } 
+        // All went well, saving back to firebase
+        else {
+            console.log(prizeArray)
+            campaignService.savePrizes($scope.campaignID, $scope.userID, prizeArray)
+            var alertPopup = $ionicPopup.alert({
+                title: 'Saved!',
+                template: 'Your points have been saved!'
             });
+            alertPopup.then(function(res) {});
         }
     }
-
 }])
 
 
