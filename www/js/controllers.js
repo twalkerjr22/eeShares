@@ -1,22 +1,25 @@
 angular.module('app.controllers', [])
   
+// This is the building tab first page
+// It lists out the buildings in the firebase database
 .controller('buildingsCtrl', ['$scope', '$stateParams', 'buildingService', '$ionicModal', '$q', '$rootScope', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $state, $ionicPopup) {
-
+    
     $scope.$on("$ionicView.beforeEnter", function(event, data){
+        // Function to get the image from the firebase storage
         $scope.getImage = function(image){
             var promise = buildingService.getURL(image);
             return promise
         }
-        
         $scope.doRefresh()
     });
     
     $scope.doRefresh = function() {
         $scope.buildingFB = buildingService.buildings;
         $scope.buildings = []
+        // Get building branch and then go through each a get its picture
         $scope.buildingFB.$loaded()
             .then(function(){
             angular.forEach($scope.buildingFB, function(building) {
@@ -26,7 +29,6 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
                         building.imageURL = val
                         $scope.buildings.push(building)  
                     }).catch(function(val){
-                        console.log(val)
                     })
                 } else {
                     building.imageURL = ''
@@ -37,6 +39,7 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
         })
     };
 
+    // Temporary Building Object for adding new ones
     $scope.data = {
         'title' : '',
         'address' : '', 
@@ -44,7 +47,7 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
         'description' : '', 
         'image' : '', 
     }
-  
+    // Modal popup for adding a new building to the firebase database
     $scope.modal = $ionicModal.fromTemplate(
     "<ion-modal-view>" + 
         "<ion-header-bar class='bar-balanced'>" +
@@ -83,20 +86,19 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
         $scope.data.image = '';
         $scope.modal.hide();
     }
+    // Call this function to add the building to the database
     $scope.addItem = function(){
         buildingService.addItem($scope.data.title, $scope.data.address, $scope.data.owner, $scope.data.description, $scope.data.image);
         $scope.closeModal()
-        
     }
 }])
    
+// This is the controller for the first personal page tab
+// Here you can edit your picture and see all campaigns you are a part of 
 .controller('personalCtrl', ['$scope', '$stateParams', '$firebaseArray', '$firebaseAuth', '$state', 'userService', 'campaignService', '$cordovaCamera', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userService, campaignService, $cordovaCamera, $ionicPopup) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
-        // handle event
         $scope.update = userService.checkUpdate();
         $scope.update.$loaded()
         .then(function(){
@@ -111,6 +113,38 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
             }
         })
 
+        $scope.doRefresh()
+
+    });
+    
+    // Functions to access camera gallery and choose picture
+    $scope.addMedia = function(){
+        var options = {
+            quality: 75, 
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            allowEdit: true,
+            encodingTyoe: Camera.EncodingType.JPEG,
+            popoverOptions: CameraPopoverOptions,
+            targetWidth: 500,
+            targetHeight: 500,
+            saveToPhotoAlbum: false
+        }
+        // Given the picture chosen, upload it to firebase
+        $cordovaCamera.getPicture(options).then(function(imageData){
+            var promise = userService.setIcon(firebase.auth().currentUser.uid, imageData)
+            promise.then(function(item){
+                $scope.doRefresh()
+            }).catch(function(error){
+                console.log("error setting image")
+            })
+        }, function(error){
+            console.log("error")
+            console.log(error)
+        })
+    }
+
+    $scope.doRefresh = function() {
         $scope.empty = true;
         var currentUser = firebase.auth().currentUser;
         if(currentUser != null){
@@ -126,9 +160,10 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
                 }    
             }).catch(function(val){
             })
-            
+            // List the campaigns the user has joined
             $scope.campaignsFB = userService.getCampaignList(firebase.auth().currentUser.uid);
             $scope.campaigns = []
+            // I pull out all of the information but don't use all
             $scope.campaignsFB.$loaded()
                 .then(function(){
                 angular.forEach($scope.campaignsFB, function(campaign) {
@@ -152,78 +187,10 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
                 if($scope.campaigns.length === 0)
                     $scope.empty = true
             })
-        }
-
-    });
-
-    $scope.addMedia = function(){
-        var options = {
-            quality: 75, 
-            destinationType: Camera.DestinationType.DATA_URL,
-            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-            allowEdit: true,
-            encodingTyoe: Camera.EncodingType.JPEG,
-            popoverOptions: CameraPopoverOptions,
-            targetWidth: 500,
-            targetHeight: 500,
-            saveToPhotoAlbum: false
-        }
-        $cordovaCamera.getPicture(options).then(function(imageData){
-            var promise = userService.setIcon(firebase.auth().currentUser.uid, imageData)
-            promise.then(function(item){
-                $scope.doRefresh()
-            }).catch(function(error){
-                console.log("error setting image")
-            })
-        }, function(error){
-            console.log("error")
-            console.log(error)
-        })
-    }
-
-    $scope.doRefresh = function() {
-        $scope.empty = true;
-        var currentUser = firebase.auth().currentUser;
-        var user = userService.getUser(currentUser.uid);
-        user.then(function(user){
-            $scope.name = user.val().name;
-            $scope.userData = {
-                name: user.val().name,
-                email: user.val().email,
-                buildings: user.val().buildings,
-                icon: user.val().icon
-            }    
-        }).catch(function(val){
-        })
-        $scope.campaignsFB = userService.getCampaignList(firebase.auth().currentUser.uid);
-        $scope.campaigns = []
-        $scope.campaignsFB.$loaded()
-            .then(function(){
-            angular.forEach($scope.campaignsFB, function(campaign) {
-                var promise = campaignService.getCampaign(campaign.campaignID)
-                promise.then(function(val){
-                    var item = {
-                        'name': val.val().name,
-                        'goal': val.val().goal, 
-                        'duration': val.val().duration, 
-                        'description': val.val().description, 
-                        'building': val.val().building,
-                        'active' : val.val().active,
-                        'id' : campaign.campaignID
-                    }
-                    $scope.campaigns.push(item)
-                    if(item !== {}){
-                        $scope.empty = false;
-                    }
-                })
-            })
-            if($scope.campaigns.length === 0)
-                $scope.empty = true
-        })
         $scope.$broadcast('scroll.refreshComplete');
+        }
     
     };
-
 
     $scope.logout = function(){
         firebase.auth().signOut().then(function() {
@@ -251,11 +218,17 @@ function ($scope, $stateParams, buildingService, $state) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         $scope.id = $stateParams.id;
+        $scope.doRefresh()        
+    });
+
+    // On refresh of the page
+    $scope.doRefresh = function() {
         $scope.labels = [];
         $scope.data = [];
-        var dailyData = [];
-        var rollingAverageAllData = [];
-        
+        dailyData = [];
+        rollingAverageAllData = [];
+        rollingAverageMonthlyData = [];
+        monthyData = [];
         // Get Building Branch
         $scope.building = buildingService.getBuilding($scope.id)
         $scope.building.then(function(snapshot){
@@ -280,12 +253,12 @@ function ($scope, $stateParams, buildingService, $state) {
              // Get the daily data 
              dataFB.$loaded()
              .then(function(billingObject){
-                console.log(billingObject)
                 var water = {name: 'Water', data: []}
                 var steam = {name: 'Steam', data: []}
                 var electric = {name: 'Electric', data: []}
                 var total = {name: 'Total', data: []}
-                var goal = {name: 'Total Goal', data: []}                 
+                var goal = {name: 'Total Goal', data: []}               
+                // Go through each bill and pull out the data to match highchart format  
                 angular.forEach(billingObject[1].all, function(bill){
                     var date = new Date(bill.date)
                     goal.data.push([date.getTime(), $scope.dailyCostGoal]);
@@ -301,6 +274,7 @@ function ($scope, $stateParams, buildingService, $state) {
                 dailyData.push(electric);
                 dailyData.push(total);
                 $scope.data.push(dailyData);
+
                 // Now get rolling average all data
                 var water = {name: 'Water', data: []}
                 var steam = {name: 'Steam', data: []}
@@ -308,6 +282,7 @@ function ($scope, $stateParams, buildingService, $state) {
                 var total = {name: 'Total', data: []}
                 var goal = {name: 'Total Goal', data: []}      
                 angular.forEach(billingObject[3], function(bill){
+                    // quirky fix to remove the 2 non data fields
                     if(bill === null || bill === 'rollingAverageAll')
                         return;
                     var date = new Date(bill.date)
@@ -323,8 +298,38 @@ function ($scope, $stateParams, buildingService, $state) {
                 rollingAverageAllData.push(electric);
                 rollingAverageAllData.push(total);
                 $scope.data.push(rollingAverageAllData)
+
+                // Get the monthly rolling average data
+                angular.forEach(billingObject[4], function(month){
+                    // quirky fix to remove the 2 non data fields
+                    if(month === null || month === 'rollingAverageMonthly')
+                        return;
+                    // For each month you have a whole set of data
+                    var water = {name: 'Water', data: []}
+                    var steam = {name: 'Steam', data: []}
+                    var electric = {name: 'Electric', data: []}
+                    var total = {name: 'Total', data: []}
+                    var goal = {name: 'Total Goal', data: []}      
+                    angular.forEach(month, function(bill){
+                        var date = new Date(bill.date)
+                        goal.data.push([date.getTime(), $scope.dailyCostGoal]);
+                        water.data.push([date.getTime(), bill.water]);
+                        steam.data.push([date.getTime(), bill.steam]);
+                        electric.data.push([date.getTime(), bill.electric]);
+                        total.data.push([date.getTime(), bill.total]);
+                    })
+                    rollingAverageMonthlyData.push(goal);
+                    rollingAverageMonthlyData.push(water);
+                    rollingAverageMonthlyData.push(steam);
+                    rollingAverageMonthlyData.push(electric);
+                    rollingAverageMonthlyData.push(total);
+                    temp = {};
+                    temp[month.$firebaseAuth] = rollingAverageMonthlyData;
+                    $scope.data.push(temp);
+                })
              })
         }).then(function(){
+            console.log($scope.data)
             // Set up the highstock for the dailyCost
             $(function () { 
                 var myChart = Highcharts.stockChart('dailyCost', {
@@ -392,99 +397,22 @@ function ($scope, $stateParams, buildingService, $state) {
                 });
             });
         })
-    });
-
-    $scope.doRefresh = function() {
-        $scope.id = $stateParams.id;
-        $scope.labels = [];
-        $scope.data = [];
-        $scope.building = buildingService.getBuilding($scope.id)
-        $scope.building.then(function(snapshot){
-            $scope.title = snapshot.val().title;
-            $scope.address = snapshot.val().address;
-            $scope.owner = snapshot.val().owner;
-            $scope.description = snapshot.val().description;
-            $scope.campaign = snapshot.val().campaign;
-            $scope.image = snapshot.val().image;
-            $scope.campaignVal = $scope.campaign == "NA" ? false : true;
-            $scope.getImage();
-        }).then(function(){
-             var dataFB = buildingService.getBillingData($scope.id);
-             dataFB.$loaded()
-             .then(function(billingObject){
-                 var water = {name: 'Water', data: []}
-                 var steam = {name: 'Steam', data: []}
-                 var electric = {name: 'Electric', data: []}
-                 var total = {name: 'Total', data: []}
-                 var goal = {name: 'Total Goal', data: []}                 
-                 angular.forEach(billingObject, function(bill){
-                     var date = new Date(bill.date)
-                     goal.data.push([date.getTime(), $scope.dailyCostGoal]);
-                     water.data.push([date.getTime(), bill.water]);
-                     steam.data.push([date.getTime(), bill.steam]);
-                     electric.data.push([date.getTime(), bill.electric]);
-                     total.data.push([date.getTime(), bill.total]);
-                     $scope.labels.push([date.getTime(), bill.date]);
-                 })
-                $scope.data.push(goal);
-                $scope.data.push(water);
-                $scope.data.push(steam);
-                $scope.data.push(electric);
-                $scope.data.push(total);
-             })
-        }).then(function(){
-            console.log($scope.data);
-            $(function () { 
-                var myChart = Highcharts.stockChart('container', {
-                    chart: {
-                        type: 'line'
-                    },
-                    title: {
-                        text: $scope.title + ' Utility Costs',
-                    },
-                    // xAxis: {
-                    //     categories: $scope.labels
-                    // },
-                    yAxis: {
-                        title: {
-                            text: 'Cost ($)'
-                        },
-                        plotLines: [{
-                            value: 0,
-                            width: 1,
-                            color: '#808080'
-                        }]
-                    },
-                    legend: {
-                        align: 'center',
-                        verticalAlign: 'bottom',
-                        x: 0,
-                        y: 0
-                    },
-                    series: $scope.data
-            
-                });
-            });
-
-        })
         $scope.$broadcast('scroll.refreshComplete');
     };
     
 }])
-   
+
+// This is the controller for the login page   
 .controller('loginCtrl', ['$scope', '$stateParams', '$firebaseAuth', 'firebase', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
  
-
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         $scope.data = {
             'email': '',
             'password': ''
         }
 
-
+        // First check if the user is already signed in
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 // User is signed in. 
@@ -493,24 +421,26 @@ function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
                 // No user is signed in.
             }
         });
-        
+        // Check the email and password
         $scope.login = function(){
             firebase.auth().signInWithEmailAndPassword($scope.data.email, $scope.data.password)
             .catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 $scope.error = error.message;
-                console.log("fail12")
+                console.log("fail")
                 
             });
         }
     });
  
 }])
-   
+
+// This is the controller for the signup page
 .controller('signupCtrl', ['$scope', '$stateParams', '$ionicAuth', '$ionicUser', '$state', 'userService', '$firebaseAuth', 'firebase',  
 function ($scope, $stateParams, $ionicAuth, $ionicUser, $state, userService, $firebaseAuth, firebase) {
-     
+    
+    // Access firebase auth
     var auth = $firebaseAuth()
     
     $scope.data = {
@@ -523,7 +453,6 @@ function ($scope, $stateParams, $ionicAuth, $ionicUser, $state, userService, $fi
 
     $scope.signup = function(){
         $scope.createUser();
-        
     }
     
     $scope.createUser = function() {
@@ -555,10 +484,11 @@ function ($scope, $stateParams, $ionicAuth, $ionicUser, $state, userService, $fi
 
 }
 ])
-   
+
+// This page is accessed when a user clicks on add campaign in the building info page
+// Currently this should be blocked and not accessed because we restrict users to do so
+// We are restricting by already having the campaign active so it will show the campaign info page instead
 .controller('addCampaignCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', 'userService', '$firebaseAuth', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, campaignService, userService, $firebaseAuth) {
     
     $scope.buildingID = $stateParams.buildingID;
@@ -592,7 +522,7 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
             //, owner: ''
         } 
     }
-    
+    // Add the info to firebase
     $scope.addCampaign = function(){
         var newItemPromise = campaignService.addCampaign($scope.campaign.name, $scope.campaign.goal, $scope.campaign.duration, $scope.campaign.description, $scope.campaign.key, $scope.buildingID, firebase.auth().currentUser.uid)
         newItemPromise.then(function(snapshot){
@@ -602,16 +532,13 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
     }
 
 }])
-   
+
+// This is the controller for viewing a campaign currently on a building
+// This page is accessed by viewing a campaign from the building info page
 .controller('campaignInfoCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', '$ionicModal', '$firebaseAuth', 'userService', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $firebaseAuth, userService, $ionicPopup) {
     
-
     $scope.$on("$ionicView.beforeEnter", function(event, data){
-
-
     })
 
     $scope.id = $stateParams.id;
@@ -619,6 +546,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     $scope.joinData = {
         'key': ''
     }
+    // Pull out the information from the campaign branch
     $scope.campaign.then(function(snapshot){
         $scope.name = snapshot.val().name;
         $scope.goal = snapshot.val().goal;
@@ -639,6 +567,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         }    
     })    
     
+    // To join pull up a modal and enter the right password
     $scope.modal = $ionicModal.fromTemplate(
     "<ion-modal-view>" + 
         "<ion-header-bar class='bar-balanced'>" +
@@ -663,10 +592,12 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         $scope.modal.hide();
     }
 
+    // Join the campaign 
     $scope.join = function(){
         if($scope.key.toString() === $scope.joinData.key.toString()){
             $scope.alreadyJoined = 0;
             $scope.usersFB = campaignService.getUserList($scope.id);
+            // Check if you have already joined
             $scope.usersFB.$loaded()
             .then(function(){
                 angular.forEach($scope.usersFB, function(member) {
@@ -685,6 +616,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                         $scope.alreadyJoined = 1;
                     }
                 })
+                // Add the user
                 if(alreadyJoined === 0){
                     userService.addCampaign(firebase.auth().currentUser.uid, $scope.id)
                     campaignService.addUser($scope.id, firebase.auth().currentUser.uid)
@@ -710,8 +642,6 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
 }])
    
 .controller('campaignCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', '$ionicModal', '$firebaseAuth', 'userService', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $firebaseAuth, userService, $ionicPopup) {
     
     $scope.$on("$ionicView.beforeEnter", function(event, data){
