@@ -223,7 +223,7 @@ angular.module('data', ['firebase'])
             return $firebaseObject(refDatabase.child('buildings').child(id).child('current'))
         }, 
         getExpectedBill: function(id){
-            return $firebaseObject(refDatabase.child('buildings').child(id).child('expectedByMonthEnd'))
+            return $firebaseObject(refDatabase.child('buildings').child(id).child('data').child('30DayExtrapolate').child('total'))
         }
         
     }

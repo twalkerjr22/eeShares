@@ -712,7 +712,8 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                 $scope.expectedBillFB = buildingService.getExpectedBill($scope.building)
                 $scope.expectedBillFB.$loaded()
                 .then(function(item){
-                    $scope.expectedBill = item.total;
+                    $scope.expectedBill = item.$value;
+                    console.log($scope.expectedBill)
                 }).then(function(){
                     var number1 = Number($scope.milestone.replace(/[^0-9\.]+/g,""));
                     var number2 = Number($scope.expectedBill.toString().replace(/[^0-9\.]+/g,""));
