@@ -571,7 +571,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     $scope.modal = $ionicModal.fromTemplate(
     "<ion-modal-view>" + 
         "<ion-header-bar class='bar-balanced'>" +
-            "<h1 class='title'>Add a Task</h1>" +
+            "<h1 class='title'>Enter Campaign key</h1>" +
             '<button class="button button-clear" ng-click="closeModal()">Close</button>' +
         "</ion-header-bar>" +
         "<ion-content class='padding'>" +
@@ -641,12 +641,15 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     }
 }])
    
+// Controller for the campaign page when selected from the personal page
+// This page manages tasks, and directs to the message board and prize page
 .controller('campaignCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', '$ionicModal', '$firebaseAuth', 'userService', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $firebaseAuth, userService, $ionicPopup) {
     
     $scope.$on("$ionicView.beforeEnter", function(event, data){
         $scope.id = $stateParams.id;
         $scope.campaign = campaignService.getCampaign($scope.id)
+        // Pull out campaign info
         $scope.campaign.then(function(snapshot){
             $scope.name = snapshot.val().name;
             $scope.goal = snapshot.val().goal;
@@ -662,6 +665,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
 
         })
         
+        // Pull out user info
         var user = userService.getUser(firebase.auth().currentUser.uid);
         user.then(function(user){
             $scope.userData = {
@@ -671,6 +675,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                 buildings: user.val().buildings
             }    
         }).then(function(){
+            // Find the user in the campaign
             $scope.usersFB = campaignService.getUserList($scope.id);
             $scope.usersFB.$loaded()
                 .then(function(){
@@ -733,7 +738,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     $scope.modal = $ionicModal.fromTemplate(
     "<ion-modal-view>" + 
         "<ion-header-bar class='bar-balanced'>" +
-            "<h1 class='title'>Add a Building</h1>" +
+            "<h1 class='title'>Add a Task</h1>" +
             '<button class="button button-clear" ng-click="closeModal()">Close</button>' +
         "</ion-header-bar>" +
         "<ion-content class='padding'>" +
