@@ -67,7 +67,7 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
         scope: $scope, 
         animation : 'slide-in-up'
     }) 
-        
+    // On click to open the modal
     $scope.showModal = function(){
         var alertPopup = $ionicPopup.alert({
             title: 'Feature Only Available for Admins!',
@@ -99,6 +99,8 @@ function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $s
 function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userService, campaignService, $cordovaCamera, $ionicPopup) {
 
     $scope.$on("$ionicView.beforeEnter", function(event, data){
+        // In firebase there is a update field that is set to false if there is no update
+        // set the update field to true if you want a popup to show for the app -- note this is a hack way to popup message
         $scope.update = userService.checkUpdate();
         $scope.update.$loaded()
         .then(function(){
@@ -143,7 +145,7 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
             console.log(error)
         })
     }
-
+    // On page open or refresh, reset fields and reload info
     $scope.doRefresh = function() {
         $scope.empty = true;
         var currentUser = firebase.auth().currentUser;
@@ -191,7 +193,7 @@ function ($scope, $stateParams, $firebaseArray, $firebaseAuth, $state, userServi
         }
     
     };
-
+    // logout function -- using firebase authentication doc to make 
     $scope.logout = function(){
         firebase.auth().signOut().then(function() {
           // Sign-out successful.
@@ -358,6 +360,7 @@ function ($scope, $stateParams, buildingService, $state) {
                     credits: {
                         enabled: false
                     },
+                    // most important part -- this sets the data 
                     series: $scope.data[0]
             
                 });
@@ -460,6 +463,7 @@ function ($scope, $stateParams, $ionicAuth, $ionicUser, $state, userService, $fi
       $scope.error = null;
 
       // Create a new user
+      // Uses firebase authentication docs to create 
       auth.$createUserWithEmailAndPassword($scope.data.email, $scope.data.password)
         .then(function(firebaseUser) {
           $scope.message = "User created with uid: " + firebaseUser.uid;
@@ -493,7 +497,7 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
     
     $scope.buildingID = $stateParams.buildingID;
     $scope.buildingTitle = $stateParams.buildingTitle;
-
+    // Get the user info 
     var user = userService.getUser(firebase.auth().currentUser.uid);
     user.then(function(user){
         $scope.userData = {
@@ -523,6 +527,7 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
         } 
     }
     // Add the info to firebase
+    // Takes the input field information on html as data
     $scope.addCampaign = function(){
         var newItemPromise = campaignService.addCampaign($scope.campaign.name, $scope.campaign.goal, $scope.campaign.duration, $scope.campaign.description, $scope.campaign.key, $scope.buildingID, firebase.auth().currentUser.uid)
         newItemPromise.then(function(snapshot){
@@ -568,6 +573,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     })    
     
     // To join pull up a modal and enter the right password
+    // injected html code for a modal
     $scope.modal = $ionicModal.fromTemplate(
     "<ion-modal-view>" + 
         "<ion-header-bar class='bar-balanced'>" +
@@ -600,6 +606,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
             // Check if you have already joined
             $scope.usersFB.$loaded()
             .then(function(){
+                // Go through the current members of the campaign checking the IDs
                 angular.forEach($scope.usersFB, function(member) {
                     if(member.userID === $scope.userID){
                         $scope.dailyAlert = function() {
@@ -676,6 +683,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
             }    
         }).then(function(){
             // Find the user in the campaign
+            // Go through the campaign's user list and match the IDs 
             $scope.usersFB = campaignService.getUserList($scope.id);
             $scope.usersFB.$loaded()
                 .then(function(){
@@ -687,6 +695,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                     }
                 })
             }).then(function(){
+                // Found the user inside the campaign branch, now pull info
                 $scope.userInfoFB = campaignService.getUserInfo($scope.id, $scope.campaignUserID)
                 $scope.userInfoFB.$loaded()
                 .then(function(item){
@@ -694,6 +703,8 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                     $scope.score = item.score
                 })
                 .then(function(){
+                    // Add 10 points for daily log in
+                    // set the daily login boolean -- this is reset back to false on the server code
                     if($scope.daily == false){
                         campaignService.setDaily($scope.id, $scope.campaignUserID, $scope.score + 10)
                         $scope.dailyAlert = function() {
@@ -709,14 +720,17 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                     }
                 })
             }).then(function(){
+                // Pull campaign information
                 $scope.expectedBillFB = buildingService.getExpectedBill($scope.building)
                 $scope.expectedBillFB.$loaded()
                 .then(function(item){
                     $scope.expectedBill = item.$value;
                     console.log($scope.expectedBill)
                 }).then(function(){
+                    // Check to see the current campaign scores and set the according ng-class
                     var number1 = Number($scope.milestone.replace(/[^0-9\.]+/g,""));
                     var number2 = Number($scope.expectedBill.toString().replace(/[^0-9\.]+/g,""));
+                    // Sets whether the score will be red or green
                     if(number1 < number2){
                         $scope.success = false;
                     } else {
@@ -735,7 +749,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     $scope.addTask = function(){
         $scope.showModal()
     }
-  
+    // Modal to add a new task if the user is the campaign owner
     $scope.modal = $ionicModal.fromTemplate(
     "<ion-modal-view>" + 
         "<ion-header-bar class='bar-balanced'>" +
@@ -760,19 +774,23 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
         //$scope.data.description = '';
         $scope.modal.hide();
     }
+    // a new task to the campaign
     $scope.addItem = function(){
         campaignService.addTaskToCampaign($scope.data.title, $scope.data.description, $scope.id, user.$id);
         angular.forEach($scope.usersFB, function(user) {
             campaignService.addTask($scope.data.title, $scope.data.description, $scope.id, user.$id);
         })
-        //campaignService.addTask($scope.data.title, $scope.data.description, $scope.id);
+        // campaignService.addTask($scope.data.title, $scope.data.description, $scope.id);
         $scope.closeModal()
         $scope.getTasks()
     }
-    
+    // get the task list 
     $scope.getTasks = function(){
         $scope.tasks = campaignService.getTasks($scope.id, $scope.campaignUserID)
     }
+    // push to firebase the tasks you have completed
+    // tasks should have the same json name in the app and on firebase
+    // go through the task array and push the completion field to the database
     $scope.logTasks = function(){
         var Data = []
         angular.forEach($scope.tasks, function(task) {
@@ -850,15 +868,16 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
     };
 
 }])
-   
+
+// This page is accessed from the campaign page. This page displays all of the current members of the campaign and 
+// what their score is 
 .controller('membersCtrl', ['$scope', '$stateParams', 'campaignService', 'userService', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, campaignService, userService, $state) {
 
     var id = $stateParams.id
     $scope.usersFB = campaignService.getUserList(id);
     $scope.users = []
+    // Go through each user in the campaign and pull name, score and icon
     $scope.usersFB.$loaded()
         .then(function(){
         angular.forEach($scope.usersFB, function(user) {
@@ -901,10 +920,11 @@ function ($scope, $stateParams, campaignService, userService, $state) {
     };
 
 }])
-   
+  
+// this page is accessed from the campaign page 
+// this page displays the messages posted to the campaign
+// all messages are saved and recorded under the campaign's branch in the database
 .controller('messageBoardCtrl', ['$scope', '$stateParams', 'campaignService', '$firebaseAuth', 'userService', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     
     $scope.id = $stateParams.id
@@ -912,7 +932,7 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     $scope.message = {
         'message' : ''
     }
-    
+    // Loads the newest posts from firebase
     $scope.updateMessages = function() {
         $scope.messages = [];
         $scope.messagesFB = campaignService.getMessages($scope.id);
@@ -941,7 +961,8 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
             buildings: user.val().buildings
         }    
     })
-    
+    // posts a new message to the firebase database
+    // send the message, user, and date 
     $scope.send = function(){
         if($scope.message.message === '')
             return
@@ -956,9 +977,10 @@ function ($scope, $stateParams, campaignService, $firebaseAuth, userService) {
     }
 }])
 
+// similar to the message page, but this is for the pictures of the campaign
+// loads and displays all posted pictures to campaigns
+// users are given 50 points for adding a picture because its a way of showing actual work instead of self reporting
 .controller('campaignPicturesCtrl', ['$scope', '$stateParams', 'campaignService', 'userService', '$ionicModal', '$cordovaCamera', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, campaignService, userService, $ionicModal, $cordovaCamera, $ionicPopup) {
     
     $scope.campaignID = $stateParams.campaignID
