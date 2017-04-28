@@ -1023,8 +1023,11 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
         $scope.showModal()
     }
 
+    // pushes the picture selected to firebase under campaign's branch
     $scope.addMedia = function(){
         $scope.closeModal()
+        // set the options of the picture and where it is coming from -- photo gallery
+        // this can be set later to be more dynamic or allow for the picture source to be from camera
         var options = {
             quality: 75, 
             destinationType: Camera.DestinationType.DATA_URL,
@@ -1036,15 +1039,18 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             targetHeight: 500,
             saveToPhotoAlbum: false
         }
+        // Sends the picture to firebase 
         $cordovaCamera.getPicture(options).then(function(imageData){
             var promise = campaignService.addPicture($scope.campaignID, $scope.userData.name, $scope.data.description, imageData, new Date().getTime() / 1000)
             promise.then(function(item){
+                // determine in the campaign branch which user sent the picture
                 $scope.updatePictures()
                 var one = function(callback){
                     $scope.usersFB = campaignService.getUserList($scope.campaignID);
                     $scope.usersFB.$loaded()
                         .then(function(){
                         angular.forEach($scope.usersFB, function(member) {
+                            // found the user, now use callbacks to synchronize the picture posting, reloading, and points
                             if(member.userID === $scope.userID){
                                 $scope.campaignUserID = member.$id
                                 callback();
@@ -1053,6 +1059,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
                     })
                 }
                 var two = function(){
+                    // add points to the campaign user 
                     $scope.userInfoFB = campaignService.getUserInfo($scope.campaignID, $scope.campaignUserID)
                     $scope.userInfoFB.$loaded()
                     .then(function(item){
@@ -1082,7 +1089,7 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
             console.log(error)
         })
     }
-
+    // modal popup for adding a new picture
     $scope.modal = $ionicModal.fromTemplate(
     "<ion-modal-view>" + 
         "<ion-header-bar class='bar-balanced'>" +
@@ -1113,11 +1120,11 @@ function ($scope, $stateParams, campaignService, userService, $ionicModal, $cord
 
 }])
 
+// Welcome slides
 .controller('welcomeCtrl', ['$scope', '$stateParams', '$firebaseAuth', 'firebase', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
- 
+  
+    // This flag is just to check whether the welcome slides were accessed from the app being open or from help slides
     if($stateParams.flag == 1){
 
         $scope.data = {
@@ -1125,7 +1132,7 @@ function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
             'password': ''
         }
 
-
+        // if the user is already signed in, just skip the welcome slides
         firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             // User is signed in.
@@ -1137,7 +1144,10 @@ function ($scope, $stateParams, $firebaseAuth, firebase, $state) {
     } 
 }])
 
-
+// Prize page accessed from campaign page. 
+// allows users to distribute their score points to prizes defined in the campaign
+// *** in progress -- campaign prizes do not push correctly the saved data 
+// this also needs to be edited in the join campaign page to correctly set the prize fields for each user
 .controller('cambridgePrizeCtrl', ['$scope', '$stateParams', 'buildingService', 'campaignService', 'userService', '$firebaseAuth', '$ionicPopup',
 function ($scope, $stateParams, buildingService, campaignService, userService, $firebaseAuth, $ionicPopup) {
     
@@ -1220,10 +1230,8 @@ function ($scope, $stateParams, buildingService, campaignService, userService, $
     }
 }])
 
-
+// help page for contact info, reset password, and seeing welcome slides
 .controller('helpCtrl', ['$scope', '$stateParams', 'userService', '$firebaseAuth', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, userService, $firebaseAuth, $ionicPopup) {
     
     var currentUser = firebase.auth().currentUser;
@@ -1243,6 +1251,7 @@ function ($scope, $stateParams, userService, $firebaseAuth, $ionicPopup) {
         })
     }
 
+    // firebase authentication reset password function from docs
     $scope.reset = function(){
         var auth = firebase.auth();
         var emailAddress = $scope.email;
