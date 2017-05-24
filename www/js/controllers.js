@@ -617,7 +617,7 @@ function ($scope, $stateParams, buildingService, campaignService, $ionicModal, $
                     }
                 })
                 // Add the user
-                if(alreadyJoined === 0){
+                if($scope.alreadyJoined === 0){
                     userService.addCampaign(firebase.auth().currentUser.uid, $scope.id)
                     campaignService.addUser($scope.id, firebase.auth().currentUser.uid)
                     $scope.dailyAlert = function() {
