@@ -86,7 +86,7 @@ angular.module('data', ['firebase'])
                    
                     //Fixed Bug - Once the prizes has been loaded we then add those prizes to the users data as prizes along with the other fields we need to add to each user - TW
                       prizes.$loaded().then(function(){
-                         
+                         //adding the data to the user
                          user.$add({
                         'score': 0,
                         'daily': false, 
