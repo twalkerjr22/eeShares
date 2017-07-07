@@ -92,7 +92,6 @@ angular.module('data', ['firebase'])
                         'daily': false, 
                         'tasks': tasks, 
                          prizes
-
                          })
                       })
                 })
