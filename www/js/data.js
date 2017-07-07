@@ -81,12 +81,12 @@ angular.module('data', ['firebase'])
                 var tasksFB = $firebaseObject(refDatabase.child('campaigns').child(campaignID).child('tasks'))
                 tasksFB.$loaded().then(function(tasks){
                     var user = $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('users'))
-                    //Getting the list of prizes from this campaign
+                    //Getting the list of prizes from this campaign - TW
                    var prizes =  $firebaseArray(refDatabase.child('campaigns').child(campaignID).child('prizes'))
                    
-                    //Once the prizes has been loaded we then add those prizes to the users data as prizes along with the other fields we need to add to each user
+                    //Fixed Bug - Once the prizes has been loaded we then add those prizes to the users data as prizes along with the other fields we need to add to each user - TW
                       prizes.$loaded().then(function(){
-                         
+                         //adding the data to the user
                          user.$add({
                         'score': 0,
                         'daily': false, 
