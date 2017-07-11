@@ -19,6 +19,7 @@ angular.module('app.routes', [])
       }
     }
   })
+    
 
   .state('tabsController.personal', {
     url: '/personal',
@@ -30,6 +31,15 @@ angular.module('app.routes', [])
     }
   })
 
+    .state('tabsController.tab3', {
+    url: '/settings',
+    views: {
+      'tab3': {
+        templateUrl: 'templates/settings.html',
+        controller: 'settingsCtrl'
+      }
+    }
+  })
   .state('tabsController', {
     url: '/Tabs',
     templateUrl: 'templates/tabsController.html',

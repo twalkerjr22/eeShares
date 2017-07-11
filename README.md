@@ -62,6 +62,7 @@ However whether the goal was reached can be obviously seen through the data and 
 ## Developers Guide
 
 ### Ionic
+Current Ionic Version: V1
 The application was built using an Ionic framework
 We utilized the Ionic Creator tool to do a basic design of the mobile application and Ionic services in general for the rest of the design
 Ionic made it easy to build both the Android and IOS application at the same time

@@ -1,5 +1,27 @@
 angular.module('app.controllers', [])
   
+
+// This is the settings tab controller
+// It containts the functions and variables for our settings tab
+.controller('settingsCtrl', ['$scope', '$stateParams', 'buildingService', '$ionicModal', '$q', '$rootScope', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams, buildingService, $ionicModal, $q, $rootScope, $state, $ionicPopup) {
+    
+     // logout function -- using firebase authentication doc to logout
+    $scope.logout = function(){
+        firebase.auth().signOut().then(function() {
+          // Sign-out successful.
+          $state.go('login')
+        }, function(error) {
+          // An error happened.
+          console.log(error)
+        });
+    }
+    
+    
+}])
+
 // This is the building tab first page
 // It lists out the buildings in the firebase database
 .controller('buildingsCtrl', ['$scope', '$stateParams', 'buildingService', '$ionicModal', '$q', '$rootScope', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

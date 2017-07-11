@@ -1,4 +1,8 @@
 {
   "name": "eeShares",
-  "app_id": "eda0021b"
+  "app_id": "eda0021b",
+  "type": "ionic1",
+  "watchPatterns": [
+    "scss/**/*"
+  ]
 }

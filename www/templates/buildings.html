@@ -1,25 +1,42 @@
 <ion-view id="page2">
-  <ion-nav-title>Buildings</ion-nav-title>"
-  <ion-content padding="true" clEass=" manual-remove-top-padding has-header">
+    
+  <ion-nav-title >Buildings</ion-nav-title>"
+    
+  <ion-content>
+      
     <ion-refresher
       pulling-text="Pull to refresh..."
       on-refresh="doRefresh()">
     </ion-refresher>
-    <div style="margin-right:-20px;">
-      <button id="buildings-button1" ng-click="showModal()" style="left:-10px;" class="button button-balanced  button-full button-outline">Add Building</button>
-    </div>
-    <ion-list id="buildings-list5">
+      
+   <ion-list id="buildings-list5">
+<!--
       <ion-item class="item-thumbnail-left" id="buildings-list-item3" ui-sref="tabsController.buildingInfo({&quot;id&quot;:&quot;&quot;+building.$id+&quot;&quot;})" ng-repeat="building in buildings">
         <img src="{{building.imageURL}}">
-        <h3>{{building.title}}</h2>
+        <h2>{{building.title}}</h2>
         <p style="white-space:normal;">{{building.description}}</p>
       </ion-item>
+-->
+        <ion-card sref="tabsController.buildingInfo({&quot;id&quot;:&quot;&quot;+building.$id+&quot;&quot;})" ng-repeat="building in buildings">
+        <img src="{{building.imageURL}}"/>
+        <div class="card-title">{{building.title}}</div>
+        <div class="card-subtitle">{{building.description}}</div>    
+      </ion-card>
+       
     </ion-list>
+      
+      <button id="buildings-button1" ng-click="showModal()" class="button button-energized button-block" style="border-radius:0px 0px 0px 0px;">Add Building</button>
+   
   </ion-content>
+    
+<!--
   <ion-footer-bar align-title="center" class="bar-assertive">
     <div class="buttons">
       <button class="button" ui-sref="tabsController.help">Help</button>
     </div>
     <h1 class="title">EeShares!</h1>
   </ion-footer-bar>
+-->
+    
+   
 </ion-view>
