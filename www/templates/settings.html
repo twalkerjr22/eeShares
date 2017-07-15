@@ -1,18 +1,17 @@
-<!--Settings page that lists settings for the user and gives them the option to logout of the current account. -TW-->
+<!--Settings page that lists settings for the user and gives them the option to logout of the current account. -TW -->
 
 <ion-view id="page3">
-    
-    <ion-nav-title>Settings</ion-nav-title>
-  <ion-content padding="true" class=" manual-remove-top-padding has-header">
-    
-   <ion-refresher
-      pulling-text="Pull to refresh..."
-      on-refresh="doRefresh()">
-    </ion-refresher> 
 
-      
-  <button id="settings-button6" ng-click="logout()" style="border-radius:0px 0px 0px 0px;" class="button button-assertive  button-block">Logout</button>
- 
+    <ion-nav-title>Settings</ion-nav-title>
+    <ion-content padding="true" class=" manual-remove-top-padding has-header">
+
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()">
+        </ion-refresher>
+        <!--TO-DO: ADD A RESET PASSWORD FUNCTION. RIGHT NOW THE BUTTON DOES NOT WORK AS IT DOES NOT HAVE A "resetPassword()" function. -TW -->
+        <h3 style="text-align:center; margin-top:20px; margin-bottom:20px">Update Your Settings Below</h3>
+        <button id="settings-button7" ng-click="resetPassword()" style="border-radius:0px 0px 0px 0px;" class="button button-energized  button-block">Reset Password</button>
+        <button id="settings-button6" ng-click="logout()" style="border-radius:0px 0px 0px 0px;" class="button button-assertive  button-block">Logout</button>
+
     </ion-content>
-    
+
 </ion-view>
